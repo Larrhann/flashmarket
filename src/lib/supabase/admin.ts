@@ -1,0 +1,12 @@
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/database.types";
+
+// Client "admin" — utilise la clé service_role, contourne la RLS.
+// À utiliser UNIQUEMENT dans des routes serveur de confiance (webhooks).
+export function createAdminClient() {
+  return createSupabaseClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } }
+  );
+}

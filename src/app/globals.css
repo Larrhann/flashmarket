@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f7f7f8;
+  --foreground: #14151a;
+  --card: #ffffff;
+  --card-foreground: #14151a;
+  --border: #e5e7eb;
+  --muted: #6b7280;
+  --primary: #ff5722;
+  --primary-foreground: #ffffff;
+  --accent: #16a34a;
+  --accent-foreground: #ffffff;
+}
+
+.dark {
+  --background: #0f1014;
+  --foreground: #f5f5f7;
+  --card: #1a1b21;
+  --card-foreground: #f5f5f7;
+  --border: #2a2b33;
+  --muted: #9ca3af;
+  --primary: #ff5722;
+  --primary-foreground: #ffffff;
+  --accent: #22c55e;
+  --accent-foreground: #0f1014;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input, select, textarea {
+  font-size: 16px; /* évite le zoom automatique sur iOS */
+}
