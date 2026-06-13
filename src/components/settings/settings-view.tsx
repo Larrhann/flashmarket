@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Clock,
   ShieldAlert,
+  Shield,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useTheme } from "@/components/theme-provider";
@@ -46,9 +47,12 @@ export function SettingsView({
   const [savingHub, setSavingHub] = useState(false);
 
   const [verificationStatut, setVerificationStatut] = useState(profile.verification_statut);
+  const [rectoFile, setRectoFile] = useState<File | null>(null);
+  const [versoFile, setVersoFile] = useState<File | null>(null);
   const [uploadingCni, setUploadingCni] = useState(false);
   const [cniError, setCniError] = useState<string | null>(null);
-  const cniInputRef = useRef<HTMLInputElement>(null);
+  const rectoInputRef = useRef<HTMLInputElement>(null);
+  const versoInputRef = useRef<HTMLInputElement>(null);
 
   const isProActive =
     profile.is_pro && (!profile.pro_expire_at || new Date(profile.pro_expire_at) > new Date());
@@ -101,40 +105,43 @@ export function SettingsView({
     router.refresh();
   }
 
-  async function handleCniUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  async function handleCniSubmit() {
+    if (!rectoFile || !versoFile) return;
 
     setCniError(null);
     setUploadingCni(true);
 
     const supabase = createClient();
-    const ext = file.name.split(".").pop();
-    const path = `${profile.id}/${Date.now()}.${ext}`;
 
-    const { error: uploadError } = await supabase.storage
-      .from("cni-documents")
-      .upload(path, file);
+    const uploadOne = async (file: File, side: string) => {
+      const ext = file.name.split(".").pop();
+      const path = `${profile.id}/${side}-${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("cni-documents").upload(path, file);
+      if (error) throw error;
+      return path;
+    };
 
-    if (uploadError) {
+    try {
+      const [rectoPath, versoPath] = await Promise.all([
+        uploadOne(rectoFile, "recto"),
+        uploadOne(versoFile, "verso"),
+      ]);
+
+      const res = await fetch("/api/verification/cni", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rectoPath, versoPath }),
+      });
+
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error ?? "Erreur lors de la vérification.");
+
+      setVerificationStatut(result.statut);
+    } catch (err) {
+      setCniError(err instanceof Error ? err.message : "Erreur lors de l'envoi.");
+    } finally {
       setUploadingCni(false);
-      setCniError(uploadError.message);
-      return;
     }
-
-    const { error: updateError } = await supabase
-      .from("profiles")
-      .update({ verification_statut: "en_attente", cni_photo_url: path })
-      .eq("id", profile.id);
-
-    setUploadingCni(false);
-
-    if (updateError) {
-      setCniError(updateError.message);
-      return;
-    }
-
-    setVerificationStatut("en_attente");
   }
 
   async function handleLogout() {
@@ -270,22 +277,53 @@ export function SettingsView({
           {(verificationStatut === "non_verifie" || verificationStatut === "refuse") && (
             <>
               <p className="text-xs text-muted">
-                Envoie une photo de ta CNI pour obtenir le badge vérifié et rassurer les autres
-                utilisateurs.
+                Envoie les deux faces de ta CNI. Si le nom correspond à celui de ton profil, ton
+                compte est vérifié automatiquement.
               </p>
+
               <input
-                ref={cniInputRef}
+                ref={rectoInputRef}
                 type="file"
                 accept="image/*"
-                onChange={handleCniUpload}
+                onChange={(e) => setRectoFile(e.target.files?.[0] ?? null)}
                 className="hidden"
               />
+              <button
+                type="button"
+                onClick={() => rectoInputRef.current?.click()}
+                className="flex w-full items-center justify-between rounded-2xl border border-dashed border-border bg-card p-3 text-left text-sm"
+              >
+                <span>Photo recto</span>
+                <span className={rectoFile ? "text-accent" : "text-muted"}>
+                  {rectoFile ? rectoFile.name : "Choisir..."}
+                </span>
+              </button>
+
+              <input
+                ref={versoInputRef}
+                type="file"
+                accept="image/*"
+                onChange={(e) => setVersoFile(e.target.files?.[0] ?? null)}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => versoInputRef.current?.click()}
+                className="flex w-full items-center justify-between rounded-2xl border border-dashed border-border bg-card p-3 text-left text-sm"
+              >
+                <span>Photo verso</span>
+                <span className={versoFile ? "text-accent" : "text-muted"}>
+                  {versoFile ? versoFile.name : "Choisir..."}
+                </span>
+              </button>
+
               <Button
                 variant="secondary"
-                onClick={() => cniInputRef.current?.click()}
+                onClick={handleCniSubmit}
                 loading={uploadingCni}
+                disabled={!rectoFile || !versoFile}
               >
-                Envoyer ma CNI
+                Envoyer pour vérification
               </Button>
               {cniError && <p className="text-sm text-red-500">{cniError}</p>}
             </>
@@ -357,6 +395,19 @@ export function SettingsView({
           </div>
         </div>
       </Section>
+
+      {/* Admin */}
+      {profile.is_admin && (
+        <Section title="Administration" icon={<Shield size={16} />}>
+          <Link
+            href="/admin/verifications"
+            className="flex items-center justify-between p-4 text-sm font-medium"
+          >
+            Vérifications CNI en attente
+            <ChevronRight size={18} className="text-muted" />
+          </Link>
+        </Section>
+      )}
 
       {/* Support */}
       <Section title="Support" icon={<HelpCircle size={16} />}>

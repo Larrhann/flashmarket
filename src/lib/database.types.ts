@@ -44,6 +44,8 @@ export interface Database {
           vip_expire_at: string | null;
           verification_statut: VerificationStatut;
           cni_photo_url: string | null;
+          cni_photo_url_verso: string | null;
+          is_admin: boolean;
           created_at: string;
         };
         Insert: {
@@ -63,6 +65,8 @@ export interface Database {
           vip_expire_at?: string | null;
           verification_statut?: VerificationStatut;
           cni_photo_url?: string | null;
+          cni_photo_url_verso?: string | null;
+          is_admin?: boolean;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
