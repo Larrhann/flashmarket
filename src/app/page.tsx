@@ -13,7 +13,7 @@ export default async function HomePage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("quartier_id, quartiers(nom)")
+    .select("prenom, quartier_id, is_pro, quartiers(nom)")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -38,6 +38,8 @@ export default async function HomePage() {
       initialPosts={posts ?? []}
       quartierId={profile.quartier_id}
       quartierNom={quartierNom}
+      prenom={profile.prenom}
+      isPro={profile.is_pro}
       currentUserId={user.id}
       likedPostIds={(likes ?? []).map((l) => l.post_id)}
     />
