@@ -47,6 +47,18 @@ const themeInitScript = `
     var theme = localStorage.getItem('theme') || 'system';
     var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
     if (isDark) document.documentElement.classList.add('dark');
+
+    var accents = {
+      orange: ['#ff5722', '#ffffff'],
+      lime: ['#a3e635', '#14151a'],
+      blue: ['#3b82f6', '#ffffff'],
+      purple: ['#a855f7', '#ffffff'],
+      red: ['#ef4444', '#ffffff'],
+    };
+    var accent = localStorage.getItem('accent-color') || 'orange';
+    var colors = accents[accent] || accents.orange;
+    document.documentElement.style.setProperty('--primary', colors[0]);
+    document.documentElement.style.setProperty('--primary-foreground', colors[1]);
   } catch (e) {}
 })();
 `;

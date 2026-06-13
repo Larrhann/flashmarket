@@ -7,7 +7,7 @@ export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputE
       <input
         ref={ref}
         className={clsx(
-          "w-full rounded-xl border border-border bg-card px-4 py-3 text-foreground placeholder:text-muted outline-none focus:border-primary",
+          "w-full rounded-2xl border border-border bg-card px-4 py-3 text-foreground placeholder:text-muted outline-none focus:border-primary",
           className
         )}
         {...props}
@@ -23,7 +23,7 @@ export const Select = forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<H
       <select
         ref={ref}
         className={clsx(
-          "w-full rounded-xl border border-border bg-card px-4 py-3 text-foreground outline-none focus:border-primary",
+          "w-full rounded-2xl border border-border bg-card px-4 py-3 text-foreground outline-none focus:border-primary",
           className
         )}
         {...props}

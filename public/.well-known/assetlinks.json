@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.flashmarket_five.twa",
+        "sha256_cert_fingerprints": ["7F:71:A5:9B:9B:E1:C3:E0:7B:0B:B1:8F:23:A7:1F:BD:A1:35:96:91:D5:BA:4A:2A:23:FE:77:C2:3D:61:49:9A"]
+      }
+    }]

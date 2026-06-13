@@ -20,7 +20,7 @@ import { useTheme } from "@/components/theme-provider";
 import { Toggle } from "@/components/ui/toggle";
 import { Select } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { PRICING } from "@/lib/constants";
+import { ACCENT_COLORS, PRICING } from "@/lib/constants";
 import type { Profile, Quartier, Ville } from "@/lib/database.types";
 
 export function SettingsView({
@@ -31,7 +31,7 @@ export function SettingsView({
   villes: Ville[];
 }) {
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, accent, setAccent } = useTheme();
 
   const [telephoneMasque, setTelephoneMasque] = useState(profile.telephone_masque);
   const [notifPush, setNotifPush] = useState(profile.notif_push);
@@ -241,7 +241,7 @@ export function SettingsView({
             <button
               key={t}
               onClick={() => setTheme(t)}
-              className={`flex-1 rounded-xl border px-3 py-2 text-sm font-medium ${
+              className={`flex-1 rounded-2xl border px-3 py-2 text-sm font-medium ${
                 theme === t
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-border bg-card text-foreground"
@@ -250,6 +250,22 @@ export function SettingsView({
               {t === "light" ? "Clair" : t === "dark" ? "Sombre" : "Système"}
             </button>
           ))}
+        </div>
+        <div className="border-t border-border p-4">
+          <p className="mb-3 text-xs text-muted">Couleur d&apos;accent</p>
+          <div className="flex gap-3">
+            {ACCENT_COLORS.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => setAccent(c.id)}
+                aria-label={c.label}
+                className={`h-9 w-9 rounded-full border-2 transition-transform ${
+                  accent === c.id ? "scale-110 border-foreground" : "border-transparent"
+                }`}
+                style={{ backgroundColor: c.value }}
+              />
+            ))}
+          </div>
         </div>
       </Section>
 
@@ -302,7 +318,7 @@ function Section({
         {icon}
         {title}
       </div>
-      <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
+      <div className="divide-y divide-border overflow-hidden rounded-3xl border border-border bg-card">
         {children}
       </div>
     </div>

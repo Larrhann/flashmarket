@@ -67,7 +67,7 @@ export function PostCard({ post, liked: initialLiked, currentUserId }: PostCardP
   const callLink = post.appel_numero ? `tel:${post.appel_numero}` : null;
 
   return (
-    <article className="rounded-2xl border border-border bg-card overflow-hidden">
+    <article className="rounded-3xl border border-border bg-card overflow-hidden">
       {post.photos?.[0] && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -120,7 +120,7 @@ export function PostCard({ post, liked: initialLiked, currentUserId }: PostCardP
           <button
             onClick={handleLike}
             className={clsx(
-              "flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-sm font-medium transition-colors",
+              "flex items-center gap-1.5 rounded-2xl border border-border px-3 py-2 text-sm font-medium transition-colors",
               liked ? "border-primary text-primary" : "text-foreground"
             )}
           >
@@ -133,7 +133,7 @@ export function PostCard({ post, liked: initialLiked, currentUserId }: PostCardP
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 py-2 text-sm font-semibold text-accent-foreground"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-accent px-3 py-2 text-sm font-semibold text-accent-foreground"
             >
               <MessageCircle size={18} />
               WhatsApp
@@ -143,7 +143,7 @@ export function PostCard({ post, liked: initialLiked, currentUserId }: PostCardP
           {callLink && !whatsappLink && (
             <a
               href={callLink}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground"
             >
               <Phone size={18} />
               Appeler

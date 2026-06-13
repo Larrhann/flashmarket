@@ -181,7 +181,7 @@ export function CreateForm({
             type="button"
             onClick={() => setType(opt.value)}
             className={clsx(
-              "flex-1 rounded-xl border px-2 py-3 text-xs font-semibold transition-colors",
+              "flex-1 rounded-2xl border px-2 py-3 text-xs font-semibold transition-colors",
               type === opt.value
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border bg-card text-foreground"
@@ -193,7 +193,7 @@ export function CreateForm({
       </div>
 
       {eventLocked ? (
-        <div className="rounded-2xl border border-border bg-card p-6 text-center">
+        <div className="rounded-3xl border border-border bg-card p-6 text-center">
           <Lock className="mx-auto mb-3 text-primary" size={32} />
           <h2 className="mb-1 text-base font-bold">Compte Pro requis</h2>
           <p className="mb-4 text-sm text-muted">
@@ -208,7 +208,7 @@ export function CreateForm({
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           {quotaAtteint && (
-            <div className="rounded-xl border border-primary/30 bg-primary/10 p-3 text-sm">
+            <div className="rounded-2xl border border-primary/30 bg-primary/10 p-3 text-sm">
               Tu as utilisé tes {FREE_FLASH_PER_WEEK} Flash gratuits cette
               semaine. La publication suivante coûte{" "}
               <strong>{PRICING.FLASH_PUBLICATION} FCFA</strong>.
@@ -265,7 +265,7 @@ export function CreateForm({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex h-32 w-full items-center justify-center overflow-hidden rounded-xl border border-dashed border-border bg-card"
+              className="flex h-32 w-full items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border bg-card"
             >
               {photoPreview ? (
                 // eslint-disable-next-line @next/next/no-img-element

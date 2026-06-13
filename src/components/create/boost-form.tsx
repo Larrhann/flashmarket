@@ -69,7 +69,7 @@ export function BoostForm({
       <p className="mb-6 text-sm text-muted">{titre}</p>
 
       {alreadyBoosted && (
-        <div className="mb-4 rounded-xl border border-accent/30 bg-accent/10 p-3 text-sm">
+        <div className="mb-4 rounded-2xl border border-accent/30 bg-accent/10 p-3 text-sm">
           Cette publication est déjà boostée.
         </div>
       )}
@@ -80,7 +80,7 @@ export function BoostForm({
             key={opt.hours}
             onClick={() => setHours(opt.hours)}
             className={clsx(
-              "flex w-full items-center justify-between rounded-xl border p-4 text-left transition-colors",
+              "flex w-full items-center justify-between rounded-2xl border p-4 text-left transition-colors",
               hours === opt.hours
                 ? "border-primary bg-primary/10"
                 : "border-border bg-card"

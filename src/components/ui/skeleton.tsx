@@ -2,6 +2,6 @@ import clsx from "clsx";
 
 export function Skeleton({ className }: { className?: string }) {
   return (
-    <div className={clsx("animate-pulse rounded-xl bg-card", className)} />
+    <div className={clsx("animate-pulse rounded-2xl bg-card", className)} />
   );
 }

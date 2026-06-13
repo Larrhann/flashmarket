@@ -118,7 +118,7 @@ export function ProfileView({
         {posts.map((post) => (
           <div
             key={post.id}
-            className="rounded-2xl border border-border bg-card p-3"
+            className="rounded-3xl border border-border bg-card p-3"
           >
             <div className="mb-1 flex items-center justify-between">
               <span className="text-xs font-semibold text-primary">
@@ -175,7 +175,7 @@ export function ProfileView({
             {subscriptions.map((sub) => (
               <div
                 key={sub.id}
-                className="flex items-center justify-between rounded-xl border border-border bg-card p-3 text-sm"
+                className="flex items-center justify-between rounded-2xl border border-border bg-card p-3 text-sm"
               >
                 <span className="font-medium">
                   {sub.type === "pro" ? "Compte Pro" : "Alertes VIP"}
@@ -202,7 +202,7 @@ function Stat({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-3 text-center">
+    <div className="rounded-2xl border border-border bg-card p-3 text-center">
       <div className="flex items-center justify-center gap-1 text-lg font-bold">
         {icon}
         {value}

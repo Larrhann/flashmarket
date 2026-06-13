@@ -9,6 +9,17 @@ export const PRICING = {
 
 export const FREE_FLASH_PER_WEEK = 2;
 
+// Couleurs d'accent personnalisables (Réglages > Apparence)
+export const ACCENT_COLORS = [
+  { id: "orange", label: "Orange", value: "#ff5722", foreground: "#ffffff" },
+  { id: "lime", label: "Lime", value: "#a3e635", foreground: "#14151a" },
+  { id: "blue", label: "Bleu", value: "#3b82f6", foreground: "#ffffff" },
+  { id: "purple", label: "Violet", value: "#a855f7", foreground: "#ffffff" },
+  { id: "red", label: "Rouge", value: "#ef4444", foreground: "#ffffff" },
+] as const;
+
+export type AccentColorId = (typeof ACCENT_COLORS)[number]["id"];
+
 // Lundi de la semaine en cours, format YYYY-MM-DD (clé de quota hebdomadaire)
 export function getCurrentWeekKey(date = new Date()): string {
   const d = new Date(date);
