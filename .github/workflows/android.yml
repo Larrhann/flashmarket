@@ -24,7 +24,7 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - run: npm ci
+      - run: npm install
 
       - name: Prepare web placeholder
         run: |
