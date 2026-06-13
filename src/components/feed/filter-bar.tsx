@@ -1,14 +1,15 @@
 "use client";
 
 import clsx from "clsx";
+import { Crown } from "lucide-react";
 
 export type FeedFilter = "tout" | "flash" | "event" | "formation";
 
-const filters: { value: FeedFilter; label: string }[] = [
+const filters: { value: FeedFilter; label: string; pro?: boolean }[] = [
   { value: "tout", label: "Tout" },
   { value: "flash", label: "🛍️ Flash Marché" },
-  { value: "event", label: "📅 Événements & Sorties" },
-  { value: "formation", label: "🎓 Formations & Services" },
+  { value: "event", label: "📅 Événements & Sorties", pro: true },
+  { value: "formation", label: "🎓 Formations & Services", pro: true },
 ];
 
 export function FilterBar({
@@ -32,6 +33,7 @@ export function FilterBar({
           )}
         >
           {f.label}
+          {f.pro && <Crown size={12} className="inline-block translate-y-[-1px]" />}
         </button>
       ))}
     </div>

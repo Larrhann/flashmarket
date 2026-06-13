@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, MessageCircle, Phone, Pin, MapPin, Calendar } from "lucide-react";
+import Link from "next/link";
+import { Heart, MessageCircle, Phone, Pin, MapPin, Calendar, Rocket } from "lucide-react";
 import clsx from "clsx";
 import { createClient } from "@/lib/supabase/client";
 import type { Post } from "@/lib/database.types";
@@ -65,6 +66,10 @@ export function PostCard({ post, liked: initialLiked, currentUserId }: PostCardP
     : null;
 
   const callLink = post.appel_numero ? `tel:${post.appel_numero}` : null;
+
+  const isOwner = currentUserId && post.user_id === currentUserId;
+  const isBoostActive =
+    post.is_boosted && (!post.boost_expire_at || new Date(post.boost_expire_at) > new Date());
 
   return (
     <article className="rounded-3xl border border-border bg-card overflow-hidden">
@@ -150,6 +155,16 @@ export function PostCard({ post, liked: initialLiked, currentUserId }: PostCardP
             </a>
           )}
         </div>
+
+        {isOwner && !isBoostActive && (
+          <Link
+            href={`/create/boost?post=${post.id}`}
+            className="mt-2 flex items-center justify-center gap-1.5 rounded-2xl border border-dashed border-accent/40 bg-accent/10 px-3 py-2 text-sm font-semibold text-accent"
+          >
+            <Rocket size={16} />
+            Booster cette publication
+          </Link>
+        )}
       </div>
     </article>
   );
