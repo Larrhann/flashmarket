@@ -145,7 +145,7 @@ export function PostCard({ post, liked: initialLiked, currentUserId }: PostCardP
             </a>
           )}
 
-          {callLink && !whatsappLink && (
+          {callLink && (
             <a
               href={callLink}
               className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground"
