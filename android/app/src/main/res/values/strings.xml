@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">FlashMarket</string>
+    <string name="title_activity_main">FlashMarket</string>
+    <string name="package_name">com.flashmarket.app</string>
+    <string name="custom_url_scheme">com.flashmarket.app</string>
+</resources>
