@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -14,6 +14,9 @@ import {
   BadgeCheck,
   Sparkles,
   Trash2,
+  ShieldCheck,
+  Clock,
+  ShieldAlert,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useTheme } from "@/components/theme-provider";
@@ -41,6 +44,11 @@ export function SettingsView({
   const [quartierId, setQuartierId] = useState(String(profile.quartier_id ?? ""));
   const [quartiers, setQuartiers] = useState<Quartier[]>([]);
   const [savingHub, setSavingHub] = useState(false);
+
+  const [verificationStatut, setVerificationStatut] = useState(profile.verification_statut);
+  const [uploadingCni, setUploadingCni] = useState(false);
+  const [cniError, setCniError] = useState<string | null>(null);
+  const cniInputRef = useRef<HTMLInputElement>(null);
 
   const isProActive =
     profile.is_pro && (!profile.pro_expire_at || new Date(profile.pro_expire_at) > new Date());
@@ -91,6 +99,42 @@ export function SettingsView({
     });
     setSavingHub(false);
     router.refresh();
+  }
+
+  async function handleCniUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setCniError(null);
+    setUploadingCni(true);
+
+    const supabase = createClient();
+    const ext = file.name.split(".").pop();
+    const path = `${profile.id}/${Date.now()}.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("cni-documents")
+      .upload(path, file);
+
+    if (uploadError) {
+      setUploadingCni(false);
+      setCniError(uploadError.message);
+      return;
+    }
+
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ verification_statut: "en_attente", cni_photo_url: path })
+      .eq("id", profile.id);
+
+    setUploadingCni(false);
+
+    if (updateError) {
+      setCniError(updateError.message);
+      return;
+    }
+
+    setVerificationStatut("en_attente");
   }
 
   async function handleLogout() {
@@ -202,6 +246,51 @@ export function SettingsView({
             />
           }
         />
+      </Section>
+
+      {/* Vérification d'identité */}
+      <Section title="Vérification d'identité" icon={<ShieldCheck size={16} />}>
+        <div className="space-y-3 p-4">
+          {verificationStatut === "verifie" && (
+            <div className="flex items-center gap-2 rounded-2xl bg-accent/10 p-3 text-sm font-semibold text-accent">
+              <ShieldCheck size={18} /> Identité vérifiée
+            </div>
+          )}
+          {verificationStatut === "en_attente" && (
+            <div className="flex items-center gap-2 rounded-2xl bg-primary/10 p-3 text-sm font-semibold text-primary">
+              <Clock size={18} /> Vérification en cours
+            </div>
+          )}
+          {verificationStatut === "refuse" && (
+            <div className="flex items-center gap-2 rounded-2xl bg-red-500/10 p-3 text-sm font-semibold text-red-500">
+              <ShieldAlert size={18} /> Document refusé, réessaie
+            </div>
+          )}
+
+          {(verificationStatut === "non_verifie" || verificationStatut === "refuse") && (
+            <>
+              <p className="text-xs text-muted">
+                Envoie une photo de ta CNI pour obtenir le badge vérifié et rassurer les autres
+                utilisateurs.
+              </p>
+              <input
+                ref={cniInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleCniUpload}
+                className="hidden"
+              />
+              <Button
+                variant="secondary"
+                onClick={() => cniInputRef.current?.click()}
+                loading={uploadingCni}
+              >
+                Envoyer ma CNI
+              </Button>
+              {cniError && <p className="text-sm text-red-500">{cniError}</p>}
+            </>
+          )}
+        </div>
       </Section>
 
       {/* Notifications */}

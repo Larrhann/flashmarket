@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Eye, Heart, Pin, Trash2, BadgeCheck, Settings as SettingsIcon } from "lucide-react";
+import { Eye, Heart, Pin, Trash2, BadgeCheck, ShieldCheck, Settings as SettingsIcon } from "lucide-react";
 import clsx from "clsx";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -62,6 +62,9 @@ export function ProfileView({
             </h1>
             {profile.is_pro && (
               <BadgeCheck size={20} className="text-accent" />
+            )}
+            {profile.verification_statut === "verifie" && (
+              <ShieldCheck size={20} className="text-primary" />
             )}
           </div>
           <p className="text-sm text-muted">

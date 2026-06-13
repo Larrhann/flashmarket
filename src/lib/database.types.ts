@@ -1,6 +1,7 @@
 export type PostType = "flash" | "event" | "formation";
 export type PostStatut = "actif" | "expire" | "supprime";
 export type ThemeMode = "light" | "dark" | "system";
+export type VerificationStatut = "non_verifie" | "en_attente" | "verifie" | "refuse";
 export type SubscriptionType = "pro" | "vip_alertes";
 export type SubscriptionStatut = "actif" | "expire" | "annule";
 export type TransactionType =
@@ -41,6 +42,8 @@ export interface Database {
           notif_sms: boolean;
           vip_alertes: boolean;
           vip_expire_at: string | null;
+          verification_statut: VerificationStatut;
+          cni_photo_url: string | null;
           created_at: string;
         };
         Insert: {
@@ -58,6 +61,8 @@ export interface Database {
           notif_sms?: boolean;
           vip_alertes?: boolean;
           vip_expire_at?: string | null;
+          verification_statut?: VerificationStatut;
+          cni_photo_url?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
