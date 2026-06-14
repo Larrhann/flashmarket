@@ -2,12 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { BadgeCheck, Pin, Search } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { BadgeCheck, Search } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Post, Quartier, Ville } from "@/lib/database.types";
 import { FilterBar, type FeedFilter } from "./filter-bar";
 import { FeedSidebar } from "./feed-sidebar";
 import { PostCard } from "./post-card";
+import { HeroSlider } from "./hero-slider";
+import { PostDetailModal } from "./post-detail-modal";
 
 const HUB_STORAGE_KEY = "flashmarket_public_hub";
 
@@ -21,11 +24,6 @@ interface FeedViewProps {
   isPro?: boolean;
   currentUserId: string | null;
   likedPostIds: number[];
-}
-
-function formatPrix(prix: number | null) {
-  if (prix == null) return null;
-  return new Intl.NumberFormat("fr-FR").format(prix) + " FCFA";
 }
 
 export function FeedView({
@@ -43,6 +41,14 @@ export function FeedView({
   const [filter, setFilter] = useState<FeedFilter>("tout");
   const [search, setSearch] = useState("");
   const [liked] = useState<Set<number>>(new Set(likedPostIds));
+
+  const searchParams = useSearchParams();
+  const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const postParam = searchParams.get("post");
+    if (postParam) setSelectedPostId(Number(postParam));
+  }, [searchParams]);
 
   // Sélection ville/quartier pour les visiteurs non connectés
   const [hubVilleId, setHubVilleId] = useState<string>("");
@@ -154,7 +160,15 @@ export function FeedView({
     });
   }, [hubFiltered, filter, search]);
 
-  const featured = useMemo(() => hubFiltered.filter(isBoostActive).slice(0, 8), [hubFiltered]);
+  const heroPosts = useMemo(() => {
+    const boosted = hubFiltered.filter(isBoostActive);
+    if (boosted.length > 0) return boosted.slice(0, 8);
+
+    const withPhotos = hubFiltered.filter((p) => p.photos && p.photos.length > 0);
+    const shuffled = [...withPhotos].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 6);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hubFiltered]);
 
   const counts = useMemo(
     () => ({
@@ -172,6 +186,11 @@ export function FeedView({
   const quartiersDeLaVille = useMemo(
     () => quartiers.filter((q) => String(q.ville_id) === hubVilleId),
     [quartiers, hubVilleId]
+  );
+
+  const selectedPost = useMemo(
+    () => posts.find((p) => p.id === selectedPostId) ?? null,
+    [posts, selectedPostId]
   );
 
   return (
@@ -257,37 +276,8 @@ export function FeedView({
         </div>
       )}
 
-      {featured.length > 0 && (
-        <div className="mt-3 -mx-4 flex gap-3 overflow-x-auto px-4 pb-1">
-          {featured.map((post) => (
-            <Link
-              key={post.id}
-              href={`/?post=${post.id}`}
-              className="relative h-32 w-44 shrink-0 overflow-hidden rounded-3xl bg-card"
-            >
-              {post.photos?.[0] ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={post.photos[0]}
-                  alt={post.titre}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="h-full w-full bg-gradient-to-br from-primary/30 to-accent/30" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-              <span className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-accent/90 px-2 py-0.5 text-[10px] font-semibold text-accent-foreground">
-                <Pin size={10} /> Boosté
-              </span>
-              <div className="absolute bottom-2 left-2 right-2">
-                <p className="line-clamp-1 text-sm font-bold text-white">{post.titre}</p>
-                {post.prix != null && (
-                  <p className="text-xs font-semibold text-white/90">{formatPrix(post.prix)}</p>
-                )}
-              </div>
-            </Link>
-          ))}
-        </div>
+      {heroPosts.length > 0 && (
+        <HeroSlider posts={heroPosts} onSelect={(post) => setSelectedPostId(post.id)} />
       )}
 
       <div className="mt-3 grid grid-cols-3 gap-2 md:hidden">
@@ -340,10 +330,25 @@ export function FeedView({
               }}
               liked={liked.has(post.id)}
               currentUserId={currentUserId}
+              onOpen={() => setSelectedPostId(post.id)}
             />
           ))}
         </div>
       </div>
+
+      {selectedPost && (
+        <PostDetailModal
+          post={{
+            ...selectedPost,
+            quartier_nom:
+              quartierNom ??
+              (selectedPost as Post & { quartier_nom?: string }).quartier_nom,
+          }}
+          liked={liked.has(selectedPost.id)}
+          currentUserId={currentUserId}
+          onClose={() => setSelectedPostId(null)}
+        />
+      )}
     </div>
   );
 }

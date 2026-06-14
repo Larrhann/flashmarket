@@ -12,6 +12,7 @@ interface PostCardProps {
   post: Post & { quartier_nom?: string; auteur_nom?: string };
   liked: boolean;
   currentUserId: string | null;
+  onOpen?: () => void;
 }
 
 const typeLabels: Record<string, string> = {
@@ -36,7 +37,7 @@ function timeAgo(dateStr: string) {
   return `il y a ${days} j`;
 }
 
-export function PostCard({ post, liked: initialLiked, currentUserId }: PostCardProps) {
+export function PostCard({ post, liked: initialLiked, currentUserId, onOpen }: PostCardProps) {
   const router = useRouter();
   const [liked, setLiked] = useState(initialLiked);
   const [likesCount, setLikesCount] = useState(post.likes_count);
@@ -79,7 +80,7 @@ export function PostCard({ post, liked: initialLiked, currentUserId }: PostCardP
 
   return (
     <article className="overflow-hidden rounded-3xl border border-border bg-card transition-shadow hover:shadow-lg">
-      <div className="relative">
+      <div className="relative cursor-pointer" onClick={onOpen}>
         {post.photos?.[0] ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -109,10 +110,14 @@ export function PostCard({ post, liked: initialLiked, currentUserId }: PostCardP
       </div>
 
       <div className="p-4">
-        <h3 className="text-base font-bold leading-snug">{post.titre}</h3>
+        <h3 className="cursor-pointer text-base font-bold leading-snug" onClick={onOpen}>
+          {post.titre}
+        </h3>
 
         {post.description && (
-          <p className="mt-1 line-clamp-2 text-sm text-muted">{post.description}</p>
+          <p className="mt-1 line-clamp-2 cursor-pointer text-sm text-muted" onClick={onOpen}>
+            {post.description}
+          </p>
         )}
 
         <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted">
