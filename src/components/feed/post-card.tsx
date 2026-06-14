@@ -127,7 +127,7 @@ export function PostCard({ post, liked: initialLiked, currentUserId }: PostCardP
           )}
         </div>
 
-        <div className="mt-4 flex items-center gap-2">
+        <div className="mt-4 space-y-2">
           <button
             onClick={handleLike}
             className={clsx(
@@ -139,26 +139,30 @@ export function PostCard({ post, liked: initialLiked, currentUserId }: PostCardP
             {likesCount}
           </button>
 
-          {whatsappLink && (
-            <a
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-accent px-3 py-2 text-sm font-semibold text-accent-foreground"
-            >
-              <MessageCircle size={18} />
-              WhatsApp
-            </a>
-          )}
+          {(whatsappLink || callLink) && (
+            <div className="flex items-center gap-2">
+              {whatsappLink && (
+                <a
+                  href={whatsappLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-2xl bg-accent px-3 py-2 text-sm font-semibold text-accent-foreground"
+                >
+                  <MessageCircle size={18} className="shrink-0" />
+                  <span className="truncate">WhatsApp</span>
+                </a>
+              )}
 
-          {callLink && (
-            <a
-              href={callLink}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground"
-            >
-              <Phone size={18} />
-              Appeler
-            </a>
+              {callLink && (
+                <a
+                  href={callLink}
+                  className="flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-2xl bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground"
+                >
+                  <Phone size={18} className="shrink-0" />
+                  <span className="truncate">Appeler</span>
+                </a>
+              )}
+            </div>
           )}
         </div>
 
