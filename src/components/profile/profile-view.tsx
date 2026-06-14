@@ -53,7 +53,7 @@ export function ProfileView({
   }
 
   return (
-    <main className="px-4 py-4">
+    <main className="px-4 py-4 md:mx-auto md:max-w-2xl">
       <div className="mb-4 flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">

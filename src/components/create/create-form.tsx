@@ -170,7 +170,7 @@ export function CreateForm({
   }
 
   return (
-    <main className="px-4 py-4">
+    <main className="px-4 py-4 md:mx-auto md:max-w-2xl">
       <h1 className="mb-4 text-xl font-bold">Nouvelle publication</h1>
 
       {/* Sélecteur de type */}
