@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { FeedView } from "@/components/feed/feed-view";
-import { LandingView } from "@/components/landing/landing-view";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -10,7 +9,32 @@ export default async function HomePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return <LandingView />;
+  const { data: villes } = await supabase.from("villes").select("*").order("nom");
+  const { data: quartiers } = await supabase.from("quartiers").select("*").order("nom");
+
+  if (!user) {
+    const { data: posts } = await supabase
+      .from("posts")
+      .select("*, quartiers(nom)")
+      .eq("statut", "actif")
+      .order("created_at", { ascending: false })
+      .limit(100);
+
+    const publicPosts = (posts ?? []).map((p) => ({
+      ...p,
+      quartier_nom: (p.quartiers as unknown as { nom: string } | null)?.nom,
+    }));
+
+    return (
+      <FeedView
+        initialPosts={publicPosts}
+        villes={villes ?? []}
+        quartiers={quartiers ?? []}
+        currentUserId={null}
+        likedPostIds={[]}
+      />
+    );
+  }
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -37,6 +61,8 @@ export default async function HomePage() {
   return (
     <FeedView
       initialPosts={posts ?? []}
+      villes={villes ?? []}
+      quartiers={quartiers ?? []}
       quartierId={profile.quartier_id}
       quartierNom={quartierNom}
       prenom={profile.prenom}

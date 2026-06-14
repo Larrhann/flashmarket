@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Heart, MessageCircle, Phone, Pin, MapPin, Calendar, Rocket } from "lucide-react";
 import clsx from "clsx";
 import { createClient } from "@/lib/supabase/client";
@@ -36,12 +37,17 @@ function timeAgo(dateStr: string) {
 }
 
 export function PostCard({ post, liked: initialLiked, currentUserId }: PostCardProps) {
+  const router = useRouter();
   const [liked, setLiked] = useState(initialLiked);
   const [likesCount, setLikesCount] = useState(post.likes_count);
   const [pending, setPending] = useState(false);
 
   async function handleLike() {
-    if (!currentUserId || pending) return;
+    if (!currentUserId) {
+      router.push("/onboarding");
+      return;
+    }
+    if (pending) return;
     setPending(true);
 
     // Optimistic update

@@ -4,7 +4,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { BottomNav } from "@/components/bottom-nav";
 import { ServiceWorkerRegister } from "@/components/sw-register";
-import { createClient } from "@/lib/supabase/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,11 +68,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
@@ -86,7 +80,7 @@ export default async function RootLayout({
           <div className="mx-auto flex w-full max-w-lg flex-1 flex-col pb-20">
             {children}
           </div>
-          {user && <BottomNav />}
+          <BottomNav />
           <ServiceWorkerRegister />
         </ThemeProvider>
       </body>
