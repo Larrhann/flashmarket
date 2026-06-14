@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { BottomNav } from "@/components/bottom-nav";
+import { SiteHeader } from "@/components/site-header";
 import { ServiceWorkerRegister } from "@/components/sw-register";
 
 const geistSans = Geist({
@@ -77,7 +78,8 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} min-h-full flex flex-col antialiased`}
       >
         <ThemeProvider>
-          <div className="mx-auto flex w-full max-w-lg flex-1 flex-col pb-20">
+          <SiteHeader />
+          <div className="mx-auto flex w-full max-w-lg flex-1 flex-col pb-20 md:max-w-6xl md:pb-8">
             {children}
           </div>
           <BottomNav />

@@ -202,7 +202,7 @@ export function FeedView({
       </header>
 
       {!currentUserId && (
-        <div className="mt-3 grid grid-cols-2 gap-2">
+        <div className="mt-3 grid grid-cols-2 gap-2 md:max-w-md">
           <select
             value={hubVilleId}
             onChange={(e) => updateHub(e.target.value, "")}
@@ -290,9 +290,9 @@ export function FeedView({
 
       <FilterBar active={filter} onChange={setFilter} />
 
-      <div className="space-y-4 pb-6">
+      <div className="grid grid-cols-1 gap-4 pb-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {sortedFiltered.length === 0 && (
-          <p className="py-12 text-center text-sm text-muted">
+          <p className="col-span-full py-12 text-center text-sm text-muted">
             Aucune publication pour le moment dans cette zone.
           </p>
         )}
