@@ -2,10 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { BadgeCheck, Pin } from "lucide-react";
+import { BadgeCheck, Pin, Search } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Post, Quartier, Ville } from "@/lib/database.types";
 import { FilterBar, type FeedFilter } from "./filter-bar";
+import { FeedSidebar } from "./feed-sidebar";
 import { PostCard } from "./post-card";
 
 const HUB_STORAGE_KEY = "flashmarket_public_hub";
@@ -40,6 +41,7 @@ export function FeedView({
 }: FeedViewProps) {
   const [posts, setPosts] = useState(initialPosts);
   const [filter, setFilter] = useState<FeedFilter>("tout");
+  const [search, setSearch] = useState("");
   const [liked] = useState<Set<number>>(new Set(likedPostIds));
 
   // Sélection ville/quartier pour les visiteurs non connectés
@@ -132,8 +134,17 @@ export function FeedView({
   }, [posts, currentUserId, hubVilleId, hubQuartierId]);
 
   const sortedFiltered = useMemo(() => {
-    const filtered =
+    let filtered =
       filter === "tout" ? hubFiltered : hubFiltered.filter((p) => p.type === filter);
+
+    const query = search.trim().toLowerCase();
+    if (query) {
+      filtered = filtered.filter(
+        (p) =>
+          p.titre.toLowerCase().includes(query) ||
+          (p.description ?? "").toLowerCase().includes(query)
+      );
+    }
 
     return [...filtered].sort((a, b) => {
       const aBoosted = isBoostActive(a);
@@ -141,7 +152,7 @@ export function FeedView({
       if (aBoosted !== bBoosted) return aBoosted ? -1 : 1;
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
-  }, [hubFiltered, filter]);
+  }, [hubFiltered, filter, search]);
 
   const featured = useMemo(() => hubFiltered.filter(isBoostActive).slice(0, 8), [hubFiltered]);
 
@@ -150,6 +161,7 @@ export function FeedView({
       flash: hubFiltered.filter((p) => p.type === "flash").length,
       event: hubFiltered.filter((p) => p.type === "event").length,
       formation: hubFiltered.filter((p) => p.type === "formation").length,
+      total: hubFiltered.length,
     }),
     [hubFiltered]
   );
@@ -200,6 +212,20 @@ export function FeedView({
           </Link>
         )}
       </header>
+
+      <div className="relative mt-3">
+        <Search
+          size={18}
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+        />
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Rechercher une publication..."
+          className="w-full rounded-2xl border border-border bg-card py-2.5 pl-10 pr-4 text-sm text-foreground outline-none focus:border-primary md:max-w-md"
+        />
+      </div>
 
       {!currentUserId && (
         <div className="mt-3 grid grid-cols-2 gap-2 md:max-w-md">
@@ -264,7 +290,7 @@ export function FeedView({
         </div>
       )}
 
-      <div className="mt-3 grid grid-cols-3 gap-2">
+      <div className="mt-3 grid grid-cols-3 gap-2 md:hidden">
         <button
           onClick={() => setFilter("flash")}
           className="rounded-2xl border border-border bg-card p-3 text-left"
@@ -288,27 +314,35 @@ export function FeedView({
         </button>
       </div>
 
-      <FilterBar active={filter} onChange={setFilter} />
+      <div className="md:hidden">
+        <FilterBar active={filter} onChange={setFilter} />
+      </div>
 
-      <div className="grid grid-cols-1 gap-4 pb-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {sortedFiltered.length === 0 && (
-          <p className="col-span-full py-12 text-center text-sm text-muted">
-            Aucune publication pour le moment dans cette zone.
-          </p>
-        )}
-        {sortedFiltered.map((post) => (
-          <PostCard
-            key={post.id}
-            post={{
-              ...post,
-              quartier_nom:
-                quartierNom ??
-                (post as Post & { quartier_nom?: string }).quartier_nom,
-            }}
-            liked={liked.has(post.id)}
-            currentUserId={currentUserId}
-          />
-        ))}
+      <div className="mt-3 pb-6 md:flex md:gap-6">
+        <aside className="hidden md:block md:w-64 shrink-0">
+          <FeedSidebar active={filter} onChange={setFilter} counts={counts} />
+        </aside>
+
+        <div className="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:self-start">
+          {sortedFiltered.length === 0 && (
+            <p className="col-span-full py-12 text-center text-sm text-muted">
+              Aucune publication pour le moment dans cette zone.
+            </p>
+          )}
+          {sortedFiltered.map((post) => (
+            <PostCard
+              key={post.id}
+              post={{
+                ...post,
+                quartier_nom:
+                  quartierNom ??
+                  (post as Post & { quartier_nom?: string }).quartier_nom,
+              }}
+              liked={liked.has(post.id)}
+              currentUserId={currentUserId}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

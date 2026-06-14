@@ -78,53 +78,57 @@ export function PostCard({ post, liked: initialLiked, currentUserId }: PostCardP
     post.is_boosted && (!post.boost_expire_at || new Date(post.boost_expire_at) > new Date());
 
   return (
-    <article className="rounded-3xl border border-border bg-card overflow-hidden">
-      {post.photos?.[0] && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={post.photos[0]}
-          alt={post.titre}
-          className="h-48 w-full object-cover"
-        />
-      )}
+    <article className="overflow-hidden rounded-3xl border border-border bg-card transition-shadow hover:shadow-lg">
+      <div className="relative">
+        {post.photos?.[0] ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={post.photos[0]}
+            alt={post.titre}
+            className="h-48 w-full object-cover"
+          />
+        ) : (
+          <div className="h-48 w-full bg-gradient-to-br from-primary/20 to-accent/20" />
+        )}
+
+        <span className="absolute left-2 top-2 rounded-full bg-card/95 px-2 py-1 text-xs font-semibold text-primary shadow-sm">
+          {typeLabels[post.type]}
+        </span>
+
+        {post.is_boosted && (
+          <span className="absolute right-2 top-2 flex items-center gap-1 rounded-full bg-accent px-2 py-1 text-xs font-semibold text-accent-foreground shadow-sm">
+            <Pin size={12} /> Boosté
+          </span>
+        )}
+
+        {post.prix != null && (
+          <span className="absolute bottom-2 left-2 rounded-full bg-primary px-3 py-1 text-sm font-bold text-primary-foreground shadow-sm">
+            {formatPrix(post.prix)}
+          </span>
+        )}
+      </div>
 
       <div className="p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="text-xs font-semibold text-primary">
-            {typeLabels[post.type]}
-          </span>
-          <div className="flex items-center gap-2">
-            {post.is_boosted && (
-              <span className="flex items-center gap-1 rounded-full bg-accent/15 px-2 py-0.5 text-xs font-semibold text-accent">
-                <Pin size={12} /> Boosté
-              </span>
-            )}
-            <span className="text-xs text-muted">{timeAgo(post.created_at)}</span>
-          </div>
-        </div>
-
         <h3 className="text-base font-bold leading-snug">{post.titre}</h3>
 
         {post.description && (
           <p className="mt-1 line-clamp-2 text-sm text-muted">{post.description}</p>
         )}
 
-        <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
-          {post.prix != null && (
-            <span className="font-bold text-primary">{formatPrix(post.prix)}</span>
-          )}
-          {post.type !== "flash" && (
-            <span className="flex items-center gap-1 text-muted">
-              <Calendar size={14} />
-              {new Date(post.created_at).toLocaleDateString("fr-FR")}
-            </span>
-          )}
+        <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted">
           {post.quartier_nom && (
-            <span className="flex items-center gap-1 text-muted">
+            <span className="flex items-center gap-1">
               <MapPin size={14} />
               {post.quartier_nom}
             </span>
           )}
+          {post.type !== "flash" && (
+            <span className="flex items-center gap-1">
+              <Calendar size={14} />
+              {new Date(post.created_at).toLocaleDateString("fr-FR")}
+            </span>
+          )}
+          <span className="flex items-center gap-1">{timeAgo(post.created_at)}</span>
         </div>
 
         <div className="mt-4 space-y-2">

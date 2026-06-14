@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { BottomNav } from "@/components/bottom-nav";
 import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 import { ServiceWorkerRegister } from "@/components/sw-register";
 
 const geistSans = Geist({
@@ -45,7 +46,7 @@ export const viewport: Viewport = {
 const themeInitScript = `
 (function() {
   try {
-    var theme = localStorage.getItem('theme') || 'system';
+    var theme = localStorage.getItem('theme') || 'light';
     var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
     if (isDark) document.documentElement.classList.add('dark');
 
@@ -56,8 +57,8 @@ const themeInitScript = `
       purple: ['#a855f7', '#ffffff'],
       red: ['#ef4444', '#ffffff'],
     };
-    var accent = localStorage.getItem('accent-color') || 'orange';
-    var colors = accents[accent] || accents.orange;
+    var accent = localStorage.getItem('accent-color') || 'blue';
+    var colors = accents[accent] || accents.blue;
     document.documentElement.style.setProperty('--primary', colors[0]);
     document.documentElement.style.setProperty('--primary-foreground', colors[1]);
   } catch (e) {}
@@ -82,6 +83,7 @@ export default async function RootLayout({
           <div className="mx-auto flex w-full max-w-lg flex-1 flex-col pb-20 md:max-w-6xl md:pb-8">
             {children}
           </div>
+          <SiteFooter />
           <BottomNav />
           <ServiceWorkerRegister />
         </ThemeProvider>

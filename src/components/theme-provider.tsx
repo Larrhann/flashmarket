@@ -38,13 +38,13 @@ function applyAccent(accent: AccentColorId) {
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeMode>(() => {
-    if (typeof window === "undefined") return "system";
-    return (localStorage.getItem("theme") as ThemeMode | null) ?? "system";
+    if (typeof window === "undefined") return "light";
+    return (localStorage.getItem("theme") as ThemeMode | null) ?? "light";
   });
 
   const [accent, setAccentState] = useState<AccentColorId>(() => {
-    if (typeof window === "undefined") return "orange";
-    return (localStorage.getItem("accent-color") as AccentColorId | null) ?? "orange";
+    if (typeof window === "undefined") return "blue";
+    return (localStorage.getItem("accent-color") as AccentColorId | null) ?? "blue";
   });
 
   useEffect(() => {
