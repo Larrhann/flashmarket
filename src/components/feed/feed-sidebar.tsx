@@ -1,7 +1,25 @@
 "use client";
 
 import clsx from "clsx";
-import { LayoutGrid, ShoppingBag, CalendarDays, GraduationCap } from "lucide-react";
+import {
+  LayoutGrid,
+  ShoppingBag,
+  CalendarDays,
+  GraduationCap,
+  Store,
+  Smartphone,
+  Tv,
+  Refrigerator,
+  Sofa,
+  Laptop,
+  Shirt,
+  ShoppingCart,
+  Sparkles,
+  Baby,
+  Tractor,
+  MoreHorizontal,
+} from "lucide-react";
+import { CATEGORIES, type CategoryId } from "@/lib/constants";
 import type { FeedFilter } from "./filter-bar";
 
 const categories: { value: FeedFilter; label: string; icon: typeof LayoutGrid }[] = [
@@ -11,13 +29,36 @@ const categories: { value: FeedFilter; label: string; icon: typeof LayoutGrid }[
   { value: "formation", label: "Formations & Services", icon: GraduationCap },
 ];
 
+const rubriqueIcons: Record<CategoryId, typeof LayoutGrid> = {
+  boutiques: Store,
+  telephones: Smartphone,
+  tv_electronique: Tv,
+  electromenager: Refrigerator,
+  maison_bureau: Sofa,
+  informatique: Laptop,
+  mode: Shirt,
+  supermarche: ShoppingCart,
+  beaute_hygiene: Sparkles,
+  bebes: Baby,
+  agriculture: Tractor,
+  autres: MoreHorizontal,
+};
+
 interface FeedSidebarProps {
   active: FeedFilter;
   onChange: (f: FeedFilter) => void;
   counts: { flash: number; event: number; formation: number; total: number };
+  activeCategorie: string | null;
+  onChangeCategorie: (c: string | null) => void;
 }
 
-export function FeedSidebar({ active, onChange, counts }: FeedSidebarProps) {
+export function FeedSidebar({
+  active,
+  onChange,
+  counts,
+  activeCategorie,
+  onChangeCategorie,
+}: FeedSidebarProps) {
   const countFor: Record<FeedFilter, number> = {
     tout: counts.total,
     flash: counts.flash,
@@ -59,6 +100,45 @@ export function FeedSidebar({ active, onChange, counts }: FeedSidebarProps) {
             </button>
           </li>
         ))}
+      </ul>
+
+      <p className="mt-3 px-2 pb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+        Rubriques
+      </p>
+      <ul className="space-y-1">
+        <li>
+          <button
+            onClick={() => onChangeCategorie(null)}
+            className={clsx(
+              "flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors",
+              activeCategorie === null
+                ? "bg-primary text-primary-foreground"
+                : "text-foreground hover:bg-background"
+            )}
+          >
+            <LayoutGrid size={18} />
+            Toutes les rubriques
+          </button>
+        </li>
+        {CATEGORIES.map(({ id, label }) => {
+          const Icon = rubriqueIcons[id];
+          return (
+            <li key={id}>
+              <button
+                onClick={() => onChangeCategorie(id)}
+                className={clsx(
+                  "flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors",
+                  activeCategorie === id
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-background"
+                )}
+              >
+                <Icon size={18} />
+                {label}
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );

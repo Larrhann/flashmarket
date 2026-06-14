@@ -20,6 +20,24 @@ export const ACCENT_COLORS = [
 
 export type AccentColorId = (typeof ACCENT_COLORS)[number]["id"];
 
+// Rubriques (catégories) pour les publications de type "Flash Marché"
+export const CATEGORIES = [
+  { id: "boutiques", label: "Boutiques Officielles" },
+  { id: "telephones", label: "Téléphones & Tablettes" },
+  { id: "tv_electronique", label: "TV & Électronique" },
+  { id: "electromenager", label: "Électroménager" },
+  { id: "maison_bureau", label: "Maison et bureau" },
+  { id: "informatique", label: "Informatique" },
+  { id: "mode", label: "Mode" },
+  { id: "supermarche", label: "Supermarché" },
+  { id: "beaute_hygiene", label: "Beauté & Hygiène" },
+  { id: "bebes", label: "Produits pour bébés" },
+  { id: "agriculture", label: "Agriculture & Élevage" },
+  { id: "autres", label: "Autres catégories" },
+] as const;
+
+export type CategoryId = (typeof CATEGORIES)[number]["id"];
+
 // Lundi de la semaine en cours, format YYYY-MM-DD (clé de quota hebdomadaire)
 export function getCurrentWeekKey(date = new Date()): string {
   const d = new Date(date);

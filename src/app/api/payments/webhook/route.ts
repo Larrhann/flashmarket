@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
         .insert({
           user_id: tx.user_id,
           type: payload.type as "flash" | "event" | "formation",
+          categorie: (payload.categorie as string) ?? null,
           titre: payload.titre as string,
           description: (payload.description as string) ?? null,
           prix: (payload.prix as number) ?? null,

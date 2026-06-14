@@ -92,6 +92,7 @@ export interface Database {
           statut: PostStatut;
           created_at: string;
           expires_at: string;
+          categorie: string | null;
         };
         Insert: {
           id?: number;
@@ -112,6 +113,7 @@ export interface Database {
           statut?: PostStatut;
           created_at?: string;
           expires_at?: string;
+          categorie?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["posts"]["Insert"]>;
         Relationships: [];

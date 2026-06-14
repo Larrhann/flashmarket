@@ -6,9 +6,9 @@ import { ImagePlus, Lock } from "lucide-react";
 import clsx from "clsx";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input, Select } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { FREE_FLASH_PER_WEEK, PRICING } from "@/lib/constants";
+import { CATEGORIES, FREE_FLASH_PER_WEEK, PRICING } from "@/lib/constants";
 import type { PostType } from "@/lib/database.types";
 
 interface CreateFormProps {
@@ -38,6 +38,7 @@ export function CreateForm({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [type, setType] = useState<PostType>("flash");
+  const [categorie, setCategorie] = useState("");
   const [titre, setTitre] = useState("");
   const [description, setDescription] = useState("");
   const [prix, setPrix] = useState("");
@@ -109,6 +110,7 @@ export function CreateForm({
           statut: "en_attente",
           payload: {
             type,
+            categorie: type === "flash" ? categorie || null : null,
             titre: titre.trim(),
             description: description.trim() || null,
             prix: prix ? Number(prix) : null,
@@ -136,6 +138,7 @@ export function CreateForm({
     const { error: insertError } = await supabase.from("posts").insert({
       user_id: userId,
       type,
+      categorie: type === "flash" ? categorie || null : null,
       titre: titre.trim(),
       description: description.trim() || null,
       prix: prix ? Number(prix) : null,
@@ -212,6 +215,20 @@ export function CreateForm({
               Tu as utilisé tes {FREE_FLASH_PER_WEEK} Flash gratuits cette
               semaine. La publication suivante coûte{" "}
               <strong>{PRICING.FLASH_PUBLICATION} FCFA</strong>.
+            </div>
+          )}
+
+          {type === "flash" && (
+            <div>
+              <label className="mb-1 block text-sm font-medium">Rubrique</label>
+              <Select value={categorie} onChange={(e) => setCategorie(e.target.value)}>
+                <option value="">Sélectionner une rubrique (optionnel)</option>
+                {CATEGORIES.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.label}
+                  </option>
+                ))}
+              </Select>
             </div>
           )}
 

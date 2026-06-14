@@ -39,6 +39,7 @@ export function FeedView({
 }: FeedViewProps) {
   const [posts, setPosts] = useState(initialPosts);
   const [filter, setFilter] = useState<FeedFilter>("tout");
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [liked] = useState<Set<number>>(new Set(likedPostIds));
 
@@ -143,6 +144,10 @@ export function FeedView({
     let filtered =
       filter === "tout" ? hubFiltered : hubFiltered.filter((p) => p.type === filter);
 
+    if (categoryFilter) {
+      filtered = filtered.filter((p) => p.categorie === categoryFilter);
+    }
+
     const query = search.trim().toLowerCase();
     if (query) {
       filtered = filtered.filter(
@@ -158,7 +163,7 @@ export function FeedView({
       if (aBoosted !== bBoosted) return aBoosted ? -1 : 1;
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
-  }, [hubFiltered, filter, search]);
+  }, [hubFiltered, filter, categoryFilter, search]);
 
   const heroPosts = useMemo(() => {
     const boosted = hubFiltered.filter(isBoostActive);
@@ -310,7 +315,19 @@ export function FeedView({
 
       <div className="mt-3 pb-6 md:flex md:gap-6">
         <aside className="hidden md:block md:w-64 shrink-0">
-          <FeedSidebar active={filter} onChange={setFilter} counts={counts} />
+          <FeedSidebar
+            active={filter}
+            onChange={(f) => {
+              setFilter(f);
+              setCategoryFilter(null);
+            }}
+            counts={counts}
+            activeCategorie={categoryFilter}
+            onChangeCategorie={(c) => {
+              setCategoryFilter(c);
+              if (c) setFilter("flash");
+            }}
+          />
         </aside>
 
         <div className="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:self-start">
