@@ -32,6 +32,7 @@ export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isSignupRoute = path === "/onboarding" || path === "/onboarding/otp";
   const isLocationRoute = path === "/onboarding/location";
+  const isLandingRoute = path === "/";
   const isPublicAsset =
     path.startsWith("/_next") ||
     path.startsWith("/manifest") ||
@@ -41,7 +42,7 @@ export async function updateSession(request: NextRequest) {
   if (isPublicAsset) return response;
 
   if (!user) {
-    if (!isSignupRoute) {
+    if (!isSignupRoute && !isLandingRoute) {
       const url = request.nextUrl.clone();
       url.pathname = "/onboarding";
       return NextResponse.redirect(url);

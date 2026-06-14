@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { FeedView } from "@/components/feed/feed-view";
+import { LandingView } from "@/components/landing/landing-view";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -9,7 +10,7 @@ export default async function HomePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/onboarding");
+  if (!user) return <LandingView />;
 
   const { data: profile } = await supabase
     .from("profiles")
