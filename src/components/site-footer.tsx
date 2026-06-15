@@ -35,7 +35,9 @@ export function SiteFooter() {
           <p className="mb-3 font-semibold">Informations</p>
           <ul className="space-y-2 text-muted">
             <li><Link href="/onboarding" className="hover:text-primary">Connexion / Inscription</Link></li>
-            <li className="text-muted">Côte d&apos;Ivoire</li>
+            <li><Link href="/confidentialite" className="hover:text-primary">Confidentialité</Link></li>
+            <li><Link href="/cgu" className="hover:text-primary">Conditions d&apos;utilisation</Link></li>
+            <li><Link href="/mentions-legales" className="hover:text-primary">Mentions légales</Link></li>
           </ul>
         </div>
       </div>
