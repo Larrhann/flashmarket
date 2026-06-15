@@ -141,25 +141,37 @@ export function CreateForm({
       return;
     }
 
-    const { error: insertError } = await supabase.from("posts").insert({
-      user_id: userId,
-      type,
-      categorie: type === "flash" ? categorie || null : null,
-      titre: titre.trim(),
-      description: description.trim() || null,
-      prix: prix ? Number(prix) : null,
-      photos: photoUrl ? [photoUrl] : [],
-      quartier_id: quartierId,
-      ville_id: villeId,
-      whatsapp_numero: whatsapp.trim() || null,
-      appel_numero: appel.trim() || null,
-      expires_at: expiresAt,
-    });
+    const { data: inserted, error: insertError } = await supabase
+      .from("posts")
+      .insert({
+        user_id: userId,
+        type,
+        categorie: type === "flash" ? categorie || null : null,
+        titre: titre.trim(),
+        description: description.trim() || null,
+        prix: prix ? Number(prix) : null,
+        photos: photoUrl ? [photoUrl] : [],
+        quartier_id: quartierId,
+        ville_id: villeId,
+        whatsapp_numero: whatsapp.trim() || null,
+        appel_numero: appel.trim() || null,
+        expires_at: expiresAt,
+      })
+      .select("id")
+      .single();
 
     if (insertError) {
       setLoading(false);
       setError(insertError.message);
       return;
+    }
+
+    if (inserted) {
+      fetch("/api/posts/notify-vip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postId: inserted.id }),
+      }).catch(() => {});
     }
 
     // Met à jour le quota hebdomadaire pour les Flash gratuits

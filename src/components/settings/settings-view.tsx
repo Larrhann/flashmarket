@@ -25,6 +25,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { Select } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ACCENT_COLORS, PRICING } from "@/lib/constants";
+import { VipPushToggle } from "./vip-push-toggle";
 import type { Profile, Quartier, Ville } from "@/lib/database.types";
 
 export function SettingsView({
@@ -228,7 +229,10 @@ export function SettingsView({
           description={`Reçois une notification dans l'app à chaque nouveau Flash du quartier — ${PRICING.VIP_MONTHLY} FCFA/mois`}
           right={
             isVipActive ? (
-              <span className="text-xs font-semibold text-accent">Actif</span>
+              <div className="flex flex-col items-end gap-1">
+                <span className="text-xs font-semibold text-accent">Actif</span>
+                <VipPushToggle />
+              </div>
             ) : (
               <Link href="/settings/abonnement/vip" className="text-xs font-semibold text-primary">
                 Activer

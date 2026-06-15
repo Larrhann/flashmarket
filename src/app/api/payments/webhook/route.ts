@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { checkCinetPayTransaction } from "@/lib/cinetpay";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentWeekKey } from "@/lib/constants";
+import { notifyVipForPost } from "@/lib/notify-vip";
 
 // CinetPay envoie une notification (form-urlencoded ou JSON) contenant cpm_trans_id.
 export async function POST(request: NextRequest) {
@@ -68,6 +69,7 @@ export async function POST(request: NextRequest) {
 
       if (post) {
         await supabase.from("transactions").update({ post_id: post.id }).eq("id", tx.id);
+        await notifyVipForPost(post.id);
 
         if (post.type === "flash") {
           const semaine = getCurrentWeekKey();
