@@ -11,6 +11,7 @@ export default function OnboardingPage() {
   const [nom, setNom] = useState("");
   const [prenom, setPrenom] = useState("");
   const [telephone, setTelephone] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -18,7 +19,7 @@ export default function OnboardingPage() {
     e.preventDefault();
     setError(null);
 
-    if (!nom.trim() || !prenom.trim() || !telephone.trim()) {
+    if (!nom.trim() || !prenom.trim() || !telephone.trim() || !email.trim()) {
       setError("Merci de remplir tous les champs.");
       return;
     }
@@ -30,7 +31,9 @@ export default function OnboardingPage() {
 
     setLoading(true);
     const supabase = createClient();
-    const { error: otpError } = await supabase.auth.signInWithOtp({ phone });
+    const { error: otpError } = await supabase.auth.signInWithOtp({
+      email: email.trim(),
+    });
     setLoading(false);
 
     if (otpError) {
@@ -40,7 +43,7 @@ export default function OnboardingPage() {
 
     sessionStorage.setItem(
       "flashmarket_signup",
-      JSON.stringify({ nom, prenom, telephone: phone })
+      JSON.stringify({ nom, prenom, telephone: phone, email: email.trim() })
     );
     router.push("/onboarding/otp");
   }
@@ -87,7 +90,21 @@ export default function OnboardingPage() {
             autoComplete="tel"
           />
           <p className="mt-1 text-xs text-muted">
-            Un code de vérification te sera envoyé par SMS.
+            Utilisé pour te contacter (WhatsApp/appel) sur tes publications.
+          </p>
+        </div>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium">Email</label>
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="awa@example.com"
+            autoComplete="email"
+          />
+          <p className="mt-1 text-xs text-muted">
+            Un code de vérification te sera envoyé par email.
           </p>
         </div>
 

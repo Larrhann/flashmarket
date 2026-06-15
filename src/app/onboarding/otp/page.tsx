@@ -10,6 +10,7 @@ interface SignupData {
   nom: string;
   prenom: string;
   telephone: string;
+  email: string;
 }
 
 export default function OtpPage() {
@@ -36,9 +37,9 @@ export default function OtpPage() {
 
     const supabase = createClient();
     const { data: verifyData, error: verifyError } = await supabase.auth.verifyOtp({
-      phone: data.telephone,
+      email: data.email,
       token: code,
-      type: "sms",
+      type: "email",
     });
 
     if (verifyError || !verifyData.user) {
@@ -72,7 +73,7 @@ export default function OtpPage() {
     setResending(true);
     const supabase = createClient();
     const { error: resendError } = await supabase.auth.signInWithOtp({
-      phone: data.telephone,
+      email: data.email,
     });
     setResending(false);
     if (resendError) setError(resendError.message);
@@ -85,7 +86,7 @@ export default function OtpPage() {
       <div className="mb-8 text-center">
         <h1 className="text-2xl font-bold">Vérification</h1>
         <p className="mt-2 text-sm text-muted">
-          Entre le code reçu par SMS au {data.telephone}
+          Entre le code reçu par email à {data.email}
         </p>
       </div>
 
