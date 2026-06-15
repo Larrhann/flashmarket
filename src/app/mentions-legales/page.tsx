@@ -36,14 +36,6 @@ export default function MentionsLegalesPage() {
             justifié.
           </p>
         </section>
-
-        <section>
-          <h2 className="mb-1 font-semibold">Hébergement</h2>
-          <p>
-            L&apos;application est hébergée par Vercel Inc. La base de données et le
-            stockage sont hébergés par Supabase.
-          </p>
-        </section>
       </div>
     </main>
   );
