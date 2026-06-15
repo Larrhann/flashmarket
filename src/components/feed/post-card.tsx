@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Heart, MessageCircle, Phone, Pin, MapPin, Calendar, Rocket } from "lucide-react";
 import clsx from "clsx";
 import { createClient } from "@/lib/supabase/client";
+import { MotionThumb } from "./motion-thumb";
 import type { Post } from "@/lib/database.types";
 
 interface PostCardProps {
@@ -81,7 +82,9 @@ export function PostCard({ post, liked: initialLiked, currentUserId, onOpen }: P
   return (
     <article className="overflow-hidden rounded-3xl border border-border bg-card transition-shadow hover:shadow-lg">
       <div className="relative cursor-pointer" onClick={onOpen}>
-        {post.photos?.[0] ? (
+        {isBoostActive && (post.photos?.length ?? 0) >= 2 ? (
+          <MotionThumb photos={post.photos!} alt={post.titre} className="h-48 w-full" />
+        ) : post.photos?.[0] ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={post.photos[0]}

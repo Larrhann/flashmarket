@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ImagePlus, Lock } from "lucide-react";
+import { ImagePlus, Lock, X } from "lucide-react";
 import clsx from "clsx";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -44,8 +44,8 @@ export function CreateForm({
   const [prix, setPrix] = useState("");
   const [whatsapp, setWhatsapp] = useState(defaultPhone);
   const [appel, setAppel] = useState(defaultPhone);
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -53,10 +53,17 @@ export function CreateForm({
   const quotaAtteint = type === "flash" && flashPubliesCetteSemaine >= FREE_FLASH_PER_WEEK;
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setPhotoFile(file);
-    setPhotoPreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
+    const combined = [...photoFiles, ...files].slice(0, 5);
+    setPhotoFiles(combined);
+    setPhotoPreviews(combined.map((f) => URL.createObjectURL(f)));
+    e.target.value = "";
+  }
+
+  function removePhoto(index: number) {
+    setPhotoFiles((prev) => prev.filter((_, i) => i !== index));
+    setPhotoPreviews((prev) => prev.filter((_, i) => i !== index));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -79,14 +86,13 @@ export function CreateForm({
       return;
     }
 
-    // Upload photo (si fournie)
-    let photoUrl: string | null = null;
-    if (photoFile) {
-      const ext = photoFile.name.split(".").pop();
-      const path = `${userId}/${Date.now()}.${ext}`;
-      const { error: uploadError } = await supabase.storage
-        .from("post-photos")
-        .upload(path, photoFile);
+    // Upload des photos (1 à 5). Avec 2 photos ou plus, l'effet motion
+    // (diaporama animé) s'active automatiquement sur les publications boostées.
+    const photoUrls: string[] = [];
+    for (const file of photoFiles) {
+      const ext = file.name.split(".").pop();
+      const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("post-photos").upload(path, file);
 
       if (uploadError) {
         setLoading(false);
@@ -94,7 +100,7 @@ export function CreateForm({
         return;
       }
       const { data: publicUrl } = supabase.storage.from("post-photos").getPublicUrl(path);
-      photoUrl = publicUrl.publicUrl;
+      photoUrls.push(publicUrl.publicUrl);
     }
 
     // Durée de visibilité : 48h pour un Flash gratuit, 7 jours pour un Flash
@@ -119,7 +125,7 @@ export function CreateForm({
             titre: titre.trim(),
             description: description.trim() || null,
             prix: prix ? Number(prix) : null,
-            photos: photoUrl ? [photoUrl] : [],
+            photos: photoUrls,
             quartier_id: quartierId,
             ville_id: villeId,
             whatsapp_numero: whatsapp.trim() || null,
@@ -150,7 +156,7 @@ export function CreateForm({
         titre: titre.trim(),
         description: description.trim() || null,
         prix: prix ? Number(prix) : null,
-        photos: photoUrl ? [photoUrl] : [],
+        photos: photoUrls,
         quartier_id: quartierId,
         ville_id: villeId,
         whatsapp_numero: whatsapp.trim() || null,
@@ -291,29 +297,47 @@ export function CreateForm({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium">Photo</label>
+            <label className="mb-1 block text-sm font-medium">Photos</label>
+            <p className="mb-2 text-xs text-muted">
+              Ajoute 3 à 5 photos : si tu boostes ta publication, elles seront
+              affichées en diaporama animé (effet motion).
+            </p>
             <input
               ref={fileInputRef}
               type="file"
               accept="image/*"
+              multiple
               onChange={handlePhotoChange}
               className="hidden"
             />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="flex h-32 w-full items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border bg-card"
-            >
-              {photoPreview ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={photoPreview} alt="Aperçu" className="h-full w-full object-cover" />
-              ) : (
-                <span className="flex flex-col items-center gap-1 text-sm text-muted">
-                  <ImagePlus size={24} />
-                  Ajouter une photo
-                </span>
+            <div className="grid grid-cols-3 gap-2">
+              {photoPreviews.map((src, i) => (
+                <div key={i} className="relative h-24 overflow-hidden rounded-2xl border border-border">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={src} alt={`Aperçu ${i + 1}`} className="h-full w-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removePhoto(i)}
+                    className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/50 text-white"
+                    aria-label="Retirer la photo"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+              {photoFiles.length < 5 && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex h-24 w-full items-center justify-center rounded-2xl border border-dashed border-border bg-card"
+                >
+                  <span className="flex flex-col items-center gap-1 text-xs text-muted">
+                    <ImagePlus size={20} />
+                    Ajouter
+                  </span>
+                </button>
               )}
-            </button>
+            </div>
           </div>
 
           <div>
