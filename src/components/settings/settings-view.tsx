@@ -225,7 +225,7 @@ export function SettingsView({
         />
         <Row
           label="Alertes VIP"
-          description={`Reçois les nouveautés du quartier par SMS — ${PRICING.VIP_MONTHLY} FCFA/mois`}
+          description={`Reçois une notification dans l'app à chaque nouveau Flash du quartier — ${PRICING.VIP_MONTHLY} FCFA/mois`}
           right={
             isVipActive ? (
               <span className="text-xs font-semibold text-accent">Actif</span>

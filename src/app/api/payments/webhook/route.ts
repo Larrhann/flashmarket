@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
           ville_id: payload.ville_id as number,
           whatsapp_numero: (payload.whatsapp_numero as string) ?? null,
           appel_numero: (payload.appel_numero as string) ?? null,
+          expires_at: (payload.expires_at as string) ?? undefined,
         })
         .select()
         .single();

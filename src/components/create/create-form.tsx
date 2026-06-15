@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CATEGORIES, FREE_FLASH_PER_WEEK, PRICING } from "@/lib/constants";
+import { CATEGORIES, FLASH_DURATION_HOURS, FREE_FLASH_PER_WEEK, PRICING } from "@/lib/constants";
 import type { PostType } from "@/lib/database.types";
 
 interface CreateFormProps {
@@ -97,6 +97,11 @@ export function CreateForm({
       photoUrl = publicUrl.publicUrl;
     }
 
+    // Durée de visibilité : 48h pour un Flash gratuit, 7 jours pour un Flash
+    // payant (ou pour les événements/formations Pro).
+    const dureeHeures = type === "flash" && !quotaAtteint ? FLASH_DURATION_HOURS.FREE : FLASH_DURATION_HOURS.PAID;
+    const expiresAt = new Date(Date.now() + dureeHeures * 60 * 60 * 1000).toISOString();
+
     // Si paywall atteint pour les Flash, on enregistre une transaction en
     // attente avec le brouillon de la publication, puis on redirige vers le
     // paiement (CinetPay). Le post est créé par le webhook après paiement.
@@ -119,6 +124,7 @@ export function CreateForm({
             ville_id: villeId,
             whatsapp_numero: whatsapp.trim() || null,
             appel_numero: appel.trim() || null,
+            expires_at: expiresAt,
           },
         })
         .select()
@@ -147,6 +153,7 @@ export function CreateForm({
       ville_id: villeId,
       whatsapp_numero: whatsapp.trim() || null,
       appel_numero: appel.trim() || null,
+      expires_at: expiresAt,
     });
 
     if (insertError) {
@@ -212,9 +219,10 @@ export function CreateForm({
         <form onSubmit={handleSubmit} className="space-y-4">
           {quotaAtteint && (
             <div className="rounded-2xl border border-primary/30 bg-primary/10 p-3 text-sm">
-              Tu as utilisé tes {FREE_FLASH_PER_WEEK} Flash gratuits cette
-              semaine. La publication suivante coûte{" "}
-              <strong>{PRICING.FLASH_PUBLICATION} FCFA</strong>.
+              Tu as utilisé ton Flash gratuit cette semaine (visible 48h). La
+              publication suivante coûte{" "}
+              <strong>{PRICING.FLASH_PUBLICATION} FCFA</strong> et reste en
+              ligne 7 jours.
             </div>
           )}
 

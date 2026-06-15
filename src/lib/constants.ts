@@ -1,13 +1,19 @@
 // Tarifs par défaut (en FCFA) — à ajuster selon ta stratégie de prix.
 export const PRICING = {
-  FLASH_PUBLICATION: 200, // micro-paiement au-delà de 2 flashs gratuits/semaine
-  BOOST_4H: 300,
-  BOOST_24H: 1000,
+  FLASH_PUBLICATION: 100, // micro-paiement au-delà du flash gratuit hebdomadaire
+  BOOST_DAILY: 150,
+  BOOST_MONTHLY: 4000,
   PRO_MONTHLY: 3000,
-  VIP_MONTHLY: 500,
+  VIP_MONTHLY: 1000,
 } as const;
 
-export const FREE_FLASH_PER_WEEK = 2;
+export const FREE_FLASH_PER_WEEK = 1;
+
+// Durée de visibilité des Flash : gratuit = 48h, payant = 7 jours
+export const FLASH_DURATION_HOURS = {
+  FREE: 48,
+  PAID: 24 * 7,
+} as const;
 
 // Couleurs d'accent personnalisables (Réglages > Apparence)
 export const ACCENT_COLORS = [

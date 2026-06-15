@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { PRICING } from "@/lib/constants";
 
 const options = [
-  { hours: 4, price: PRICING.BOOST_4H, label: "4 heures" },
-  { hours: 24, price: PRICING.BOOST_24H, label: "24 heures" },
+  { hours: 24, price: PRICING.BOOST_DAILY, label: "1 jour" },
+  { hours: 24 * 30, price: PRICING.BOOST_MONTHLY, label: "1 mois" },
 ];
 
 export function BoostForm({
@@ -23,7 +23,7 @@ export function BoostForm({
   alreadyBoosted: boolean;
 }) {
   const router = useRouter();
-  const [hours, setHours] = useState(4);
+  const [hours, setHours] = useState(24);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
