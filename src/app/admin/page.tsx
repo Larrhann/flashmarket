@@ -1,7 +1,4 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { AdminNav } from "@/components/admin/admin-nav";
 import { UserRegistrationChart, RevenueChart } from "@/components/admin/admin-charts";
 import { Users, FileText, ShieldCheck, TrendingUp, Zap, Crown } from "lucide-react";
 
@@ -26,13 +23,6 @@ function last6Months() {
 }
 
 export default async function AdminDashboardPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/onboarding");
-
-  const { data: profile } = await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle();
-  if (!profile?.is_admin) redirect("/");
-
   const admin = createAdminClient();
 
   const [
@@ -90,14 +80,13 @@ export default async function AdminDashboardPage() {
   ];
 
   return (
-    <main className="px-4 py-4 md:mx-auto md:max-w-5xl">
+    <div>
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-xl font-bold">Dashboard Admin</h1>
         <span className="rounded-full bg-green-500/10 px-3 py-1 text-xs font-semibold text-green-500">
           Revenus totaux : {new Intl.NumberFormat("fr-FR").format(totalRevenueTous)} FCFA
         </span>
       </div>
-      <AdminNav />
 
       {/* Stats */}
       <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-3">
@@ -115,6 +104,6 @@ export default async function AdminDashboardPage() {
         <UserRegistrationChart data={userChartData} />
         <RevenueChart data={revenueChartData} />
       </div>
-    </main>
+    </div>
   );
 }

@@ -1,16 +1,7 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { AdminNav } from "@/components/admin/admin-nav";
 import { AdminPostsList } from "@/components/admin/admin-posts-list";
 
 export default async function AdminPostsPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/onboarding");
-
-  const { data: profile } = await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle();
-  if (!profile?.is_admin) redirect("/");
 
   const admin = createAdminClient();
 
@@ -48,10 +39,9 @@ export default async function AdminPostsPage() {
   });
 
   return (
-    <main className="px-4 py-4 md:mx-auto md:max-w-4xl">
+    <div>
       <h1 className="mb-4 text-xl font-bold">Publications</h1>
-      <AdminNav />
       <AdminPostsList posts={formatted} />
-    </main>
+    </div>
   );
 }

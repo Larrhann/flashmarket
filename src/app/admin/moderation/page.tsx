@@ -1,16 +1,7 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { AdminNav } from "@/components/admin/admin-nav";
 import { AdminModerationList } from "@/components/admin/admin-moderation-list";
 
 export default async function ModerationPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/onboarding");
-
-  const { data: profile } = await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle();
-  if (!profile?.is_admin) redirect("/");
 
   const admin = createAdminClient();
 
@@ -46,7 +37,7 @@ export default async function ModerationPage() {
   }));
 
   return (
-    <main className="px-4 py-4 md:mx-auto md:max-w-5xl">
+    <div>
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold">Modération</h1>
@@ -56,8 +47,7 @@ export default async function ModerationPage() {
           {formatted.length} en attente
         </span>
       </div>
-      <AdminNav />
       <AdminModerationList posts={formatted} />
-    </main>
+    </div>
   );
 }

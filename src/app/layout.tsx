@@ -81,7 +81,7 @@ export default async function RootLayout({
       >
         <ThemeProvider>
           <SiteHeader />
-          <div className="mx-auto flex w-full max-w-lg flex-1 flex-col pb-20 md:max-w-6xl md:pb-8">
+          <div className="flex w-full flex-1 flex-col pb-20 md:pb-8">
             {children}
           </div>
           <SiteFooter />
