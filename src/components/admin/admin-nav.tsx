@@ -2,14 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Users, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, FileText, Users, ShieldCheck, AlertTriangle, Megaphone, Settings2 } from "lucide-react";
 import clsx from "clsx";
 
 const items = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/posts", label: "Publications", icon: FileText },
   { href: "/admin/users", label: "Utilisateurs", icon: Users },
-  { href: "/admin/verifications", label: "Vérifications CNI", icon: ShieldCheck },
+  { href: "/admin/moderation", label: "Modération", icon: AlertTriangle },
+  { href: "/admin/marketing", label: "Marketing", icon: Megaphone },
+  { href: "/admin/content", label: "Contenu", icon: Settings2 },
+  { href: "/admin/verifications", label: "CNI", icon: ShieldCheck },
 ];
 
 export function AdminNav() {
