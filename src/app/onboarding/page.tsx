@@ -59,22 +59,12 @@ export default function OnboardingPage() {
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
       {/* Panneau gauche — branding */}
-      <div
-        className="relative hidden md:flex md:w-1/2 flex-col items-center justify-center min-h-screen overflow-hidden"
-        style={{
-          backgroundImage: "url('/logo.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0d9488]/75 via-[#0f766e]/65 to-[#134e4a]/85" />
-        <div className="relative z-10 flex flex-col items-center text-center px-8">
-          <p className="text-3xl font-extrabold text-white drop-shadow-lg tracking-tight">FlashMarket</p>
-          <p className="mt-3 max-w-xs text-base font-medium text-white/85">
-            Le fil local de ton quartier : annonces, événements et bons plans en Côte d&apos;Ivoire.
-          </p>
-        </div>
+      <div className="relative hidden md:flex md:w-1/2 flex-col items-center justify-center min-h-screen bg-white border-r border-border">
+        <img src="/logo.png" alt="FlashMarket" className="w-40 h-40 object-contain" />
+        <p className="mt-4 text-2xl font-extrabold tracking-tight">FlashMarket</p>
+        <p className="mt-2 max-w-xs text-center text-sm text-muted">
+          Le fil local de ton quartier : annonces, événements et bons plans en Côte d&apos;Ivoire.
+        </p>
       </div>
 
       {/* Panneau droit — formulaire */}
