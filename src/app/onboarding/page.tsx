@@ -134,6 +134,13 @@ export default function OnboardingPage() {
               Recevoir le code
             </Button>
           </form>
+
+          <p className="mt-6 text-sm text-muted">
+            Déjà un compte ?{" "}
+            <a href="/login" className="text-teal-600 hover:underline font-medium">
+              Se connecter
+            </a>
+          </p>
         </div>
       </div>
     </div>

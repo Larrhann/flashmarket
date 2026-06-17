@@ -30,9 +30,10 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
-  const isSignupRoute = path === "/onboarding" || path === "/onboarding/otp";
+  const isSignupRoute = path === "/onboarding" || path === "/onboarding/otp" || path === "/login";
   const isLocationRoute = path === "/onboarding/location";
   const isLandingRoute = path === "/";
+  const isAuthCallback = path === "/auth/callback";
   const isPublicAsset =
     path.startsWith("/_next") ||
     path.startsWith("/manifest") ||
@@ -42,7 +43,7 @@ export async function updateSession(request: NextRequest) {
   if (isPublicAsset) return response;
 
   if (!user) {
-    if (!isSignupRoute && !isLandingRoute) {
+    if (!isSignupRoute && !isLandingRoute && !isAuthCallback) {
       const url = request.nextUrl.clone();
       url.pathname = "/onboarding";
       return NextResponse.redirect(url);
