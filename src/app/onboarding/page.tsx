@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -13,6 +11,7 @@ export default function OnboardingPage() {
   const [prenom, setPrenom] = useState("");
   const [telephone, setTelephone] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -20,8 +19,12 @@ export default function OnboardingPage() {
     e.preventDefault();
     setError(null);
 
-    if (!nom.trim() || !prenom.trim() || !telephone.trim() || !email.trim()) {
+    if (!nom.trim() || !prenom.trim() || !telephone.trim() || !email.trim() || !password.trim()) {
       setError("Merci de remplir tous les champs.");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Le mot de passe doit contenir au moins 6 caractères.");
       return;
     }
 
@@ -30,20 +33,25 @@ export default function OnboardingPage() {
       : `+225${telephone.trim().replace(/^0/, "")}`;
 
     setLoading(true);
-    const supabase = createClient();
-    const { error: otpError } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
+
+    const res = await fetch("/api/auth/send-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email.trim(), nom: nom.trim(), prenom: prenom.trim(), telephone: phone, password }),
     });
+
+    const json = await res.json();
     setLoading(false);
 
-    if (otpError) {
-      setError(otpError.message);
+    if (!res.ok) {
+      setError(json.error ?? "Erreur lors de l'envoi du code.");
       return;
     }
 
+    // Sauvegarder email + password pour la page OTP
     sessionStorage.setItem(
       "flashmarket_signup",
-      JSON.stringify({ nom, prenom, telephone: phone, email: email.trim() })
+      JSON.stringify({ email: email.trim(), password })
     );
     router.push("/onboarding/otp");
   }
@@ -60,9 +68,7 @@ export default function OnboardingPage() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        {/* Overlay teal pour lisibilité */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#0d9488]/75 via-[#0f766e]/65 to-[#134e4a]/85" />
-        {/* Texte par-dessus */}
         <div className="relative z-10 flex flex-col items-center text-center px-8">
           <p className="text-3xl font-extrabold text-white drop-shadow-lg tracking-tight">FlashMarket</p>
           <p className="mt-3 max-w-xs text-base font-medium text-white/85">
@@ -109,9 +115,6 @@ export default function OnboardingPage() {
                 placeholder="07 00 00 00 00"
                 autoComplete="tel"
               />
-              <p className="mt-1 text-xs text-muted">
-                Utilisé pour te contacter sur tes publications.
-              </p>
             </div>
 
             <div>
@@ -123,15 +126,23 @@ export default function OnboardingPage() {
                 placeholder="awa@example.com"
                 autoComplete="email"
               />
-              <p className="mt-1 text-xs text-muted">
-                Un code de vérification te sera envoyé.
-              </p>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">Mot de passe</label>
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Minimum 6 caractères"
+                autoComplete="new-password"
+              />
             </div>
 
             {error && <p className="text-sm text-red-500">{error}</p>}
 
             <Button type="submit" loading={loading}>
-              Recevoir le code
+              Recevoir le code de vérification
             </Button>
           </form>
 

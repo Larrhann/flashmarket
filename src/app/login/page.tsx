@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -17,19 +19,26 @@ export default function LoginPage() {
     setLoading(true);
 
     const supabase = createClient();
-    const { error: err } = await supabase.auth.signInWithOtp({
+    const { error: err } = await supabase.auth.signInWithPassword({
       email: email.trim(),
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
+      password,
     });
 
     setLoading(false);
+
     if (err) {
-      setError(err.message);
-    } else {
-      setSent(true);
+      if (err.message.includes("Invalid login credentials")) {
+        setError("Email ou mot de passe incorrect.");
+      } else if (err.message.includes("Email not confirmed")) {
+        setError("Email non vérifié. Vérifie ta boîte mail.");
+      } else {
+        setError(err.message);
+      }
+      return;
     }
+
+    router.push("/");
+    router.refresh();
   }
 
   return (
@@ -54,36 +63,40 @@ export default function LoginPage() {
 
       <div className="flex flex-1 flex-col justify-center px-6 py-12 md:px-12 lg:px-16">
         <div className="mx-auto w-full max-w-sm">
-          <h1 className="mb-1 text-2xl font-bold">Se connecter</h1>
-          <p className="mb-8 text-sm text-muted">
-            Reçois un lien de connexion par email.
-          </p>
+          <h1 className="mb-1 text-2xl font-bold">Connexion</h1>
+          <p className="mb-8 text-sm text-muted">Accède à ton compte FlashMarket.</p>
 
-          {sent ? (
-            <div className="rounded-lg bg-green-50 border border-green-200 p-4 text-sm text-green-700">
-              Lien envoyé à <strong>{email}</strong>. Clique dessus pour te connecter.
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium">Email</label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="toi@example.com"
+                autoComplete="email"
+                required
+              />
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="mb-1 block text-sm font-medium">Email</label>
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="toi@example.com"
-                  autoComplete="email"
-                  required
-                />
-              </div>
 
-              {error && <p className="text-sm text-red-500">{error}</p>}
+            <div>
+              <label className="mb-1 block text-sm font-medium">Mot de passe</label>
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Ton mot de passe"
+                autoComplete="current-password"
+                required
+              />
+            </div>
 
-              <Button type="submit" loading={loading}>
-                Envoyer le lien
-              </Button>
-            </form>
-          )}
+            {error && <p className="text-sm text-red-500">{error}</p>}
+
+            <Button type="submit" loading={loading}>
+              Se connecter
+            </Button>
+          </form>
 
           <p className="mt-6 text-sm text-muted">
             Pas encore de compte ?{" "}

@@ -6,6 +6,7 @@ import { BottomNav } from "@/components/bottom-nav";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ServiceWorkerRegister } from "@/components/sw-register";
+import { IdleLogout } from "@/components/auth/idle-logout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -86,6 +87,7 @@ export default async function RootLayout({
           <SiteFooter />
           <BottomNav />
           <ServiceWorkerRegister />
+          <IdleLogout />
         </ThemeProvider>
       </body>
     </html>

@@ -6,60 +6,51 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-interface SignupData {
-  nom: string;
-  prenom: string;
-  telephone: string;
-  email: string;
-}
-
 export default function OtpPage() {
   const router = useRouter();
-  const [data] = useState<SignupData | null>(() => {
-    if (typeof window === "undefined") return null;
-    const raw = sessionStorage.getItem("flashmarket_signup");
-    return raw ? JSON.parse(raw) : null;
-  });
+  const [signupData, setSignupData] = useState<{ email: string; password: string } | null>(null);
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
 
   useEffect(() => {
-    if (!data) router.replace("/onboarding");
-  }, [data, router]);
+    const raw = sessionStorage.getItem("flashmarket_signup");
+    if (!raw) { router.replace("/onboarding"); return; }
+    setSignupData(JSON.parse(raw));
+  }, [router]);
 
   async function handleVerify(e: React.FormEvent) {
     e.preventDefault();
-    if (!data) return;
+    if (!signupData) return;
     setError(null);
     setLoading(true);
 
-    const supabase = createClient();
-    const { data: verifyData, error: verifyError } = await supabase.auth.verifyOtp({
-      email: data.email,
-      token: code,
-      type: "email",
+    // 1. Vérifier le code via notre API
+    const res = await fetch("/api/auth/verify-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: code.trim() }),
     });
+    const json = await res.json();
 
-    if (verifyError || !verifyData.user) {
+    if (!res.ok) {
       setLoading(false);
-      setError(verifyError?.message ?? "Code invalide.");
+      setError(json.error ?? "Code invalide.");
       return;
     }
 
-    // Crée le profil (nom, prénom, téléphone) — la localisation est ajoutée à l'étape suivante
-    const { error: profileError } = await supabase.from("profiles").upsert({
-      id: verifyData.user.id,
-      nom: data.nom,
-      prenom: data.prenom,
-      telephone: data.telephone,
+    // 2. Connecter avec email + mot de passe
+    const supabase = createClient();
+    const { error: signInErr } = await supabase.auth.signInWithPassword({
+      email: signupData.email,
+      password: signupData.password,
     });
 
     setLoading(false);
 
-    if (profileError) {
-      setError(profileError.message);
+    if (signInErr) {
+      setError(signInErr.message);
       return;
     }
 
@@ -68,54 +59,75 @@ export default function OtpPage() {
   }
 
   async function handleResend() {
-    if (!data) return;
+    const raw = sessionStorage.getItem("flashmarket_signup");
+    if (!raw) return;
     setError(null);
     setResending(true);
-    const supabase = createClient();
-    const { error: resendError } = await supabase.auth.signInWithOtp({
-      email: data.email,
-    });
+    // On ne peut pas renvoyer sans les données complètes — rediriger vers onboarding
     setResending(false);
-    if (resendError) setError(resendError.message);
+    setError("Pour renvoyer le code, retourne à l'étape précédente et soumets à nouveau.");
   }
 
-  if (!data) return null;
+  if (!signupData) return null;
 
   return (
-    <main className="flex flex-1 flex-col justify-center px-6 py-12">
-      <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold">Vérification</h1>
-        <p className="mt-2 text-sm text-muted">
-          Entre le code reçu par email à {data.email}
-        </p>
+    <div className="flex min-h-screen flex-col md:flex-row">
+      <div
+        className="relative hidden md:flex md:w-1/2 flex-col items-center justify-center min-h-screen overflow-hidden"
+        style={{
+          backgroundImage: "url('/logo.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0d9488]/75 via-[#0f766e]/65 to-[#134e4a]/85" />
+        <div className="relative z-10 flex flex-col items-center text-center px-8">
+          <p className="text-3xl font-extrabold text-white drop-shadow-lg tracking-tight">FlashMarket</p>
+        </div>
       </div>
 
-      <form onSubmit={handleVerify} className="space-y-4">
-        <Input
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          maxLength={6}
-          placeholder="123456"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          className="text-center text-2xl tracking-[0.5em]"
-        />
+      <div className="flex flex-1 flex-col justify-center px-6 py-12 md:px-12 lg:px-16">
+        <div className="mx-auto w-full max-w-sm">
+          <h1 className="mb-1 text-2xl font-bold">Vérification</h1>
+          <p className="mb-2 text-sm text-muted">
+            Un code à 6 chiffres a été envoyé à
+          </p>
+          <p className="mb-8 font-semibold text-sm">{signupData?.email}</p>
 
-        {error && <p className="text-sm text-red-500">{error}</p>}
+          <form onSubmit={handleVerify} className="space-y-4">
+            <Input
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={6}
+              placeholder="123456"
+              value={code}
+              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+              className="text-center text-2xl tracking-[0.5em]"
+            />
 
-        <Button type="submit" loading={loading}>
-          Valider
-        </Button>
+            {error && <p className="text-sm text-red-500">{error}</p>}
 
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={handleResend}
-          loading={resending}
-        >
-          Renvoyer le code
-        </Button>
-      </form>
-    </main>
+            <Button type="submit" loading={loading} disabled={code.length !== 6}>
+              Valider mon compte
+            </Button>
+
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={handleResend}
+              loading={resending}
+              className="text-sm"
+            >
+              Je n&apos;ai pas reçu le code
+            </Button>
+          </form>
+
+          <p className="mt-4 text-xs text-muted text-center">
+            Le code expire dans 10 minutes.
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
