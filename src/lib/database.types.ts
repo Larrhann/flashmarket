@@ -157,6 +157,26 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["subscriptions"]["Insert"]>;
         Relationships: [];
       };
+      admin_notifications: {
+        Row: {
+          id: number;
+          user_id: string;
+          titre: string;
+          message: string;
+          lu: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          user_id: string;
+          titre: string;
+          message: string;
+          lu?: boolean;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["admin_notifications"]["Insert"]>;
+        Relationships: [];
+      };
       push_subscriptions: {
         Row: {
           id: number;

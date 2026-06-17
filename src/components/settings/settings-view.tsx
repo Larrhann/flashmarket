@@ -403,11 +403,20 @@ export function SettingsView({
       {/* Admin */}
       {profile.is_admin && (
         <Section title="Administration" icon={<Shield size={16} />}>
-          <Link
-            href="/admin/verifications"
-            className="flex items-center justify-between p-4 text-sm font-medium"
-          >
-            Vérifications CNI en attente
+          <Link href="/admin" className="flex items-center justify-between p-4 text-sm font-medium">
+            Dashboard admin
+            <ChevronRight size={18} className="text-muted" />
+          </Link>
+          <Link href="/admin/posts" className="flex items-center justify-between border-t border-border p-4 text-sm font-medium">
+            Gérer les publications
+            <ChevronRight size={18} className="text-muted" />
+          </Link>
+          <Link href="/admin/users" className="flex items-center justify-between border-t border-border p-4 text-sm font-medium">
+            Gérer les utilisateurs
+            <ChevronRight size={18} className="text-muted" />
+          </Link>
+          <Link href="/admin/verifications" className="flex items-center justify-between border-t border-border p-4 text-sm font-medium">
+            Vérifications CNI
             <ChevronRight size={18} className="text-muted" />
           </Link>
         </Section>
