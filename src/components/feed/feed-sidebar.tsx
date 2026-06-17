@@ -2,22 +2,15 @@
 
 import clsx from "clsx";
 import {
-  LayoutGrid,
-  ShoppingBag,
-  CalendarDays,
-  GraduationCap,
-  Store,
-  Smartphone,
-  Tv,
-  Refrigerator,
-  Sofa,
-  Laptop,
-  Shirt,
-  ShoppingCart,
-  Sparkles,
-  Baby,
-  Tractor,
-  MoreHorizontal,
+  LayoutGrid, ShoppingBag, CalendarDays, GraduationCap,
+  Smartphone, Tv, Refrigerator, Sofa, Laptop, Shirt,
+  ShoppingCart, Sparkles, Baby, Tractor, MoreHorizontal,
+  Store, Zap, Sun, UtensilsCrossed, BedDouble, Trees,
+  Home, Building2, MapPin, Car, Bike, Truck, HardHat, Wrench, Sailboat,
+  ShoppingBasket, Package, Scissors, Gem, Flower2, Apple, Coffee,
+  ChefHat, Construction, Plug, Fish, Leaf, Briefcase, Send, Monitor,
+  Palette, BookOpen, Music, GamepadIcon, Heart, Shield, Dumbbell,
+  TicketCheck, Gamepad2, PaintbrushIcon,
 } from "lucide-react";
 import { CATEGORIES, type CategoryId } from "@/lib/constants";
 import type { FeedFilter } from "./filter-bar";
@@ -30,17 +23,67 @@ const categories: { value: FeedFilter; label: string; icon: typeof LayoutGrid }[
 ];
 
 const rubriqueIcons: Record<CategoryId, typeof LayoutGrid> = {
-  boutiques: Store,
   telephones: Smartphone,
-  tv_electronique: Tv,
-  electromenager: Refrigerator,
-  maison_bureau: Sofa,
   informatique: Laptop,
-  mode: Shirt,
-  supermarche: ShoppingCart,
+  tv_electronique: Tv,
+  accessoires_tech: Monitor,
+  electromenager: Refrigerator,
+  engins_electriques: Zap,
+  panneaux_solaires: Sun,
+  meubles: Sofa,
+  cuisine: UtensilsCrossed,
+  literie: BedDouble,
+  jardin: Trees,
+  maisons: Home,
+  appartements: Building2,
+  terrains: MapPin,
+  bureaux_commerces: Briefcase,
+  location: Building2,
+  voitures: Car,
+  motos: Bike,
+  camions: Truck,
+  engins_chantier: HardHat,
+  pieces_auto: Wrench,
+  bateaux: Sailboat,
+  mode_homme: Shirt,
+  mode_femme: ShoppingCart,
+  mode_enfant: Baby,
+  chaussures: Package,
+  bijoux: Gem,
   beaute_hygiene: Sparkles,
-  bebes: Baby,
+  perruques_cheveux: Scissors,
+  parfums: Flower2,
+  alimentation: ShoppingBasket,
+  fruits_legumes: Apple,
+  boissons: Coffee,
+  restauration: ChefHat,
+  materiaux: Construction,
+  outillage: Wrench,
+  plomberie: Package,
+  electricite: Plug,
   agriculture: Tractor,
+  elevage: Leaf,
+  peche: Fish,
+  semences: Leaf,
+  emploi: Briefcase,
+  services_dom: Home,
+  transport: Truck,
+  informatique_serv: Monitor,
+  couture_mode_serv: Scissors,
+  coiffure_serv: Sparkles,
+  reparation: Wrench,
+  nettoyage: Package,
+  sante: Heart,
+  sport: Dumbbell,
+  bien_etre: Shield,
+  loisirs: TicketCheck,
+  livres_musique: BookOpen,
+  instruments: Music,
+  jeux_jouets: Gamepad2,
+  art_artisanat: PaintbrushIcon,
+  bebes: Baby,
+  jeux_enfants: Gamepad2,
+  boutiques: Store,
   autres: MoreHorizontal,
 };
 
@@ -105,7 +148,7 @@ export function FeedSidebar({
       <p className="mt-3 px-2 pb-2 text-xs font-semibold uppercase tracking-wide text-muted">
         Rubriques
       </p>
-      <ul className="space-y-1">
+      <ul className="space-y-1 max-h-[60vh] overflow-y-auto pr-1">
         <li>
           <button
             onClick={() => onChangeCategorie(null)}
@@ -121,7 +164,7 @@ export function FeedSidebar({
           </button>
         </li>
         {CATEGORIES.map(({ id, label }) => {
-          const Icon = rubriqueIcons[id];
+          const Icon = rubriqueIcons[id] ?? MoreHorizontal;
           return (
             <li key={id}>
               <button

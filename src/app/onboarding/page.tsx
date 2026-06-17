@@ -51,20 +51,21 @@ export default function OnboardingPage() {
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
       {/* Panneau gauche — branding */}
-      <div className="relative flex flex-col items-center justify-center bg-gradient-to-br from-[#0d9488] via-[#0f766e] to-[#134e4a] px-8 py-12 md:w-1/2">
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: "radial-gradient(circle at 20% 80%, #f97316 0%, transparent 50%), radial-gradient(circle at 80% 20%, #fbbf24 0%, transparent 50%)" }}
+      <div className="relative hidden overflow-hidden md:flex md:w-1/2">
+        {/* Image de fond qui remplit tout le panneau */}
+        <Image
+          src="/logo.png"
+          alt="FlashMarket"
+          fill
+          className="object-cover"
+          priority
         />
-        <div className="relative flex flex-col items-center text-center">
-          <Image
-            src="/logo.png"
-            alt="FlashMarket"
-            width={220}
-            height={220}
-            className="drop-shadow-2xl"
-            priority
-          />
-          <p className="mt-6 max-w-xs text-base font-medium text-white/80">
+        {/* Overlay teal semi-transparent pour garder la lisibilité */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0d9488]/70 via-[#0f766e]/60 to-[#134e4a]/80" />
+        {/* Texte par-dessus */}
+        <div className="relative flex flex-col items-center justify-end w-full pb-12 px-8 text-center">
+          <p className="text-lg font-bold text-white drop-shadow">FlashMarket</p>
+          <p className="mt-2 max-w-xs text-sm font-medium text-white/80">
             Le fil local de ton quartier : annonces, événements et bons plans en Côte d&apos;Ivoire.
           </p>
         </div>

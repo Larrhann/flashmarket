@@ -28,18 +28,81 @@ export type AccentColorId = (typeof ACCENT_COLORS)[number]["id"];
 
 // Rubriques (catégories) pour les publications de type "Flash Marché"
 export const CATEGORIES = [
-  { id: "boutiques", label: "Boutiques Officielles" },
+  // Télécom & Informatique
   { id: "telephones", label: "Téléphones & Tablettes" },
+  { id: "informatique", label: "Informatique & PC" },
   { id: "tv_electronique", label: "TV & Électronique" },
+  { id: "accessoires_tech", label: "Accessoires Tech" },
+  // Électroménager & Maison
   { id: "electromenager", label: "Électroménager" },
-  { id: "maison_bureau", label: "Maison et bureau" },
-  { id: "informatique", label: "Informatique" },
-  { id: "mode", label: "Mode" },
-  { id: "supermarche", label: "Supermarché" },
-  { id: "beaute_hygiene", label: "Beauté & Hygiène" },
-  { id: "bebes", label: "Produits pour bébés" },
-  { id: "agriculture", label: "Agriculture & Élevage" },
-  { id: "autres", label: "Autres catégories" },
+  { id: "engins_electriques", label: "Engins Électriques & Groupes" },
+  { id: "panneaux_solaires", label: "Panneaux Solaires & Énergie" },
+  { id: "meubles", label: "Meubles & Décoration" },
+  { id: "cuisine", label: "Cuisine & Arts de la table" },
+  { id: "literie", label: "Literie & Linge de maison" },
+  { id: "jardin", label: "Jardin & Extérieur" },
+  // Immobilier
+  { id: "maisons", label: "Maisons & Villas" },
+  { id: "appartements", label: "Appartements" },
+  { id: "terrains", label: "Terrains & Parcelles" },
+  { id: "bureaux_commerces", label: "Bureaux & Locaux commerciaux" },
+  { id: "location", label: "Location / Colocation" },
+  // Véhicules
+  { id: "voitures", label: "Voitures" },
+  { id: "motos", label: "Motos & Scooters" },
+  { id: "camions", label: "Camions & Utilitaires" },
+  { id: "engins_chantier", label: "Engins de Chantier" },
+  { id: "pieces_auto", label: "Pièces Auto & Moto" },
+  { id: "bateaux", label: "Bateaux & Pirogues" },
+  // Mode & Beauté
+  { id: "mode_homme", label: "Mode Homme" },
+  { id: "mode_femme", label: "Mode Femme" },
+  { id: "mode_enfant", label: "Mode Enfant" },
+  { id: "chaussures", label: "Chaussures & Maroquinerie" },
+  { id: "bijoux", label: "Bijoux & Montres" },
+  { id: "beaute_hygiene", label: "Beauté & Soins" },
+  { id: "perruques_cheveux", label: "Perruques & Cheveux" },
+  { id: "parfums", label: "Parfums & Cosmétiques" },
+  // Alimentation
+  { id: "alimentation", label: "Alimentation & Épicerie" },
+  { id: "fruits_legumes", label: "Fruits, Légumes & Produits locaux" },
+  { id: "boissons", label: "Boissons" },
+  { id: "restauration", label: "Restauration & Traiteur" },
+  // Construction & BTP
+  { id: "materiaux", label: "Matériaux de Construction" },
+  { id: "outillage", label: "Outillage & Bricolage" },
+  { id: "plomberie", label: "Plomberie & Sanitaire" },
+  { id: "electricite", label: "Électricité & Câblage" },
+  // Agriculture & Élevage
+  { id: "agriculture", label: "Agriculture & Maraîchage" },
+  { id: "elevage", label: "Élevage & Animaux" },
+  { id: "peche", label: "Pêche & Aquaculture" },
+  { id: "semences", label: "Semences & Intrants agricoles" },
+  // Services & Emploi
+  { id: "emploi", label: "Offres d'emploi" },
+  { id: "services_dom", label: "Services à domicile" },
+  { id: "transport", label: "Transport & Livraison" },
+  { id: "informatique_serv", label: "Informatique & Web (services)" },
+  { id: "couture_mode_serv", label: "Couture & Stylisme" },
+  { id: "coiffure_serv", label: "Coiffure & Esthétique" },
+  { id: "reparation", label: "Réparation & Maintenance" },
+  { id: "nettoyage", label: "Nettoyage & Entretien" },
+  // Santé & Bien-être
+  { id: "sante", label: "Santé & Pharmacie" },
+  { id: "sport", label: "Sport & Fitness" },
+  { id: "bien_etre", label: "Bien-être & Médecine douce" },
+  // Loisirs & Culture
+  { id: "loisirs", label: "Loisirs & Divertissement" },
+  { id: "livres_musique", label: "Livres, Musique & Films" },
+  { id: "instruments", label: "Instruments de musique" },
+  { id: "jeux_jouets", label: "Jeux & Jouets" },
+  { id: "art_artisanat", label: "Art & Artisanat ivoirien" },
+  // Bébés & Enfants
+  { id: "bebes", label: "Bébés & Puériculture" },
+  { id: "jeux_enfants", label: "Jeux & Fournitures scolaires" },
+  // Boutiques
+  { id: "boutiques", label: "Boutiques Officielles" },
+  { id: "autres", label: "Divers" },
 ] as const;
 
 export type CategoryId = (typeof CATEGORIES)[number]["id"];
